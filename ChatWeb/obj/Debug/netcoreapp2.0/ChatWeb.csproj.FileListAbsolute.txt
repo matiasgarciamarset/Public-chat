@@ -1,0 +1,11 @@
+C:\Users\ferna\source\repos\ChatWeb\ChatWeb\bin\Debug\netcoreapp2.0\ChatWeb.deps.json
+C:\Users\ferna\source\repos\ChatWeb\ChatWeb\bin\Debug\netcoreapp2.0\ChatWeb.runtimeconfig.json
+C:\Users\ferna\source\repos\ChatWeb\ChatWeb\bin\Debug\netcoreapp2.0\ChatWeb.runtimeconfig.dev.json
+C:\Users\ferna\source\repos\ChatWeb\ChatWeb\bin\Debug\netcoreapp2.0\ChatWeb.dll
+C:\Users\ferna\source\repos\ChatWeb\ChatWeb\obj\Debug\netcoreapp2.0\ChatWeb.csproj.CoreCompileInputs.cache
+C:\Users\ferna\source\repos\ChatWeb\ChatWeb\obj\Debug\netcoreapp2.0\ChatWeb.AssemblyInfoInputs.cache
+C:\Users\ferna\source\repos\ChatWeb\ChatWeb\obj\Debug\netcoreapp2.0\ChatWeb.AssemblyInfo.cs
+C:\Users\ferna\source\repos\ChatWeb\ChatWeb\bin\Debug\netcoreapp2.0\ChatWeb.pdb
+C:\Users\ferna\source\repos\ChatWeb\ChatWeb\obj\Debug\netcoreapp2.0\ChatWeb.dll
+C:\Users\ferna\source\repos\ChatWeb\ChatWeb\obj\Debug\netcoreapp2.0\ChatWeb.pdb
+C:\Users\ferna\source\repos\ChatWeb\ChatWeb\obj\Debug\netcoreapp2.0\ChatWeb.csprojResolveAssemblyReference.cache
