@@ -26,6 +26,9 @@ namespace ChatWeb
 
             services.AddMvc();
 
+            services.AddSingleton<IUserService, UserService>();
+            services.AddSingleton<IChatService, ChatService>();
+
             services.AddCors(options => options.AddPolicy("CorsPolicy",
             builder =>
             {
