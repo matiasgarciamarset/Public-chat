@@ -6,6 +6,11 @@ Implementación de una aplicación de chat, que cumple con los siguientes requer
 * Permite que un usuario pueda compartir una imagen en un chat (público y/o privado).
 * Permite que un usuario pueda compartir un audio en un chat (público y/o privado).
 
+# Arquitectura
+El siguiente es un diseño preliminar de la actual arquitectura de la aplicación:
+
+![Alt text](/img/diagram.png)
+
 ## Tecnologias
 
 * C#
