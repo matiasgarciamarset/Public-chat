@@ -57,6 +57,7 @@ namespace ChatWeb
             app.UseSignalR(routes =>
             {
                 routes.MapHub<ChatHub>("/chathub");
+                routes.MapHub<UserHub>("/userhub");
             });
             app.UseMvc();
         }

@@ -2,8 +2,22 @@
 <div class="row">&nbsp;</div>
 <div class="row">
     <div class="col-12">
+        <ul id="logList"></ul>
+    </div>
+    <div class="col-12">
         User..........<input type="text" id="userInput" />
+        <input type="button" id="registerButton" value="Register" />
         <br />
+        <input type="button" id="enableChatsButton" value="Enable Chats" />
+<hr>
+CONNECTED USERS: 
+<div class="col-12">
+    <ul id="userList"></ul>
+</div>
+
+<hr>
+        PUBLIC CHAT:
+         <br />
         Message...<input type="text" id="messageInput" />
         <input type="button" id="sendButton" value="Send Message" />
     </div>
@@ -18,5 +32,27 @@
         <ul id="messagesList"></ul>
     </div>
 </div>
+<hr>
+PRIVATE CHAT: 
+<br />        
+        TO (User ID): <input type="text" id="userToInput" />
+        <input type="button" id="createPrivateChatButton" value="Open Chat" />
+        <br />
+        Message...<input type="text" id="messagePrivateInput" />
+        <input type="button" id="sendPrivateButton" value="Send Message" />
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <ul id="messagesPrivateList"></ul>
+    </div>
+</div>
+<input type="button" id="closePrivateButton" value="Close private chat" />
+<hr>
 <script src="~/lib/signalr/signalr.js"></script>
 <script src="~/js/chat.js"></script>
