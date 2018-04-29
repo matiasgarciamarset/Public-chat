@@ -1,13 +1,4 @@
-ChatWeb/bin/Debug/netcoreapp2.0/ChatWeb.pdb
-.vscode/launch.json
-.vscode/tasks.json
-ChatWeb/bin/Debug/netcoreapp2.0/ChatWeb.dll
-ChatWeb/bin/Debug/netcoreapp2.0/ChatWeb.runtimeconfig.dev.json
-ChatWeb/obj/ChatWeb.csproj.nuget.cache
-ChatWeb/obj/ChatWeb.csproj.nuget.g.props
-ChatWeb/obj/ChatWeb.csproj.nuget.g.targets
-ChatWeb/obj/project.assets.json
-ChatWeb/obj/Debug/netcoreapp2.0/ChatWeb.dll
-ChatWeb/obj/Debug/netcoreapp2.0/ChatWeb.pdb
-ChatWeb/obj/Debug/netcoreapp2.0/ChatWeb.csproj.CoreCompileInputs.cache
-ChatWeb/obj/Debug/netcoreapp2.0/ChatWeb.csproj.FileListAbsolute.txt
+ChatWeb/bin/**
+.vscode/**
+ChatWeb/obj/**
+.vs/**

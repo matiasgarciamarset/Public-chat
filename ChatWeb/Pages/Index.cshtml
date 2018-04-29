@@ -1,4 +1,11 @@
 ﻿@page
+<script src="~/js/jquery-3.3.1.js"></script>
+<script src="~/js/bootstrap-3.3.7/js/bootstrap.js"></script>
+<link href="~/js/bootstrap-3.3.7/css/bootstrap.css" rel="stylesheet" />
+
+<link href="~/pages/Index/chat-window.css" rel="stylesheet" />
+<script src="~/pages/Index/chat-window.js"></script>
+
 <div class="row">&nbsp;</div>
 <div class="row">
     <div class="col-12">
@@ -9,15 +16,15 @@
         <input type="button" id="registerButton" value="Register" />
         <br />
         <input type="button" id="enableChatsButton" value="Enable Chats" />
-<hr>
-CONNECTED USERS: 
-<div class="col-12">
-    <ul id="userList"></ul>
-</div>
+        <hr>
+        CONNECTED USERS:
+        <div class="col-12">
+            <ul id="userList"></ul>
+        </div>
 
-<hr>
+        <hr>
         PUBLIC CHAT:
-         <br />
+        <br />
         Message...<input type="text" id="messageInput" />
         <input type="button" id="sendButton" value="Send Message" />
     </div>
@@ -33,15 +40,30 @@ CONNECTED USERS:
     </div>
 </div>
 <hr>
-PRIVATE CHAT: 
-<br />        
+PRIVATE CHAT:
+<br />
         TO (User ID): <input type="text" id="userToInput" />
-        <input type="button" id="createPrivateChatButton" value="Open Chat" />
-        <br />
+<input type="button" id="createPrivateChatButton" value="Open Chat" />
+<br />
         Message...<input type="text" id="messagePrivateInput" />
-        <input type="button" id="sendPrivateButton" value="Send Message" />
+<input type="button" id="sendPrivateButton" value="Send Message" />
+
+<div id="private-chat" class="chat-window col-sm-3 col-sm-offset-4 frame">
+    <div class="frame">
+        <ul></ul>
+        <div class="message-section">
+            <div class="msj-rta macro">
+                <div class="text text-r" style="background:whitesmoke !important">
+                    <input type="text" id="messagePrivateInput" class="mytext" placeholder="Type a message" />
+                </div>
+            </div>
+            <div style="padding:10px;" class="send">
+                <span id="sendPrivateButton" class="send-button glyphicon glyphicon-share-alt"></span>
+            </div>
+        </div>
     </div>
 </div>
+
 <div class="row">
     <div class="col-12">
         <hr />
