@@ -117,7 +117,6 @@ connectionUser.on("RefreshUsers", () => {
 });
 
 
-
 // INICIO DE LA CONEXION CON EL CHAT
 
 connection.start().catch(err => console.error);
@@ -158,6 +157,7 @@ function uploadFiles(inputId) {
             }
         }
     );
+}
 
 var printIn = (encodedMsg, listElement) => {
     var li = $("<li></li>").text(encodedMsg); 
