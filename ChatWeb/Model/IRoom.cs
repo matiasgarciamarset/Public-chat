@@ -1,9 +1,8 @@
 public interface IRoom
 {
-    /*
-        Return unique group ID
-     */
-    int getId();
+    // Return unique group ID
+    int Id { get; }
+
     /*
         True if user belong to the Room
      */
@@ -12,7 +11,8 @@ public interface IRoom
     /*
         Return an Room name
      */
-    string getRoomName();
+    string Name { get; }
+
     /*
         Remove user from the room
      */
@@ -20,9 +20,10 @@ public interface IRoom
     /*
         Count users in room
     */
-    int CountUsers();
+    int UserCount { get;  }
+
     /*
         Return room type
      */
-     RoomType getRoomType();
+     RoomType Type { get; }
 }

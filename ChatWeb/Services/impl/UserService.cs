@@ -1,47 +1,46 @@
 using System.Collections.Generic;
+using System.Linq;
+
 public class UserService : IUserService
 {
-    private Dictionary<int, User> registeredUsers = new Dictionary<int, User>();
+    private List<User> registeredUsers = new List<User>();
     private int lastId = 0;
 
     public int CreateUser(string userName) {
         int currentValue = lastId++;
-        User newUser = new User(currentValue, userName);
-        registeredUsers.Add(currentValue, newUser);
+
+        registeredUsers.Add(new User
+        {
+            Id = currentValue,
+            Name = userName
+        });
+
         return currentValue;
     }
 
     public bool DeleteUser(User user) {
-        if (ExistsUserWithId(user.Id)) {
-            registeredUsers.Remove(user.Id);
+        if (ExistsUserWithId(user.Id))
+        {
+            registeredUsers.Remove(user);
             return true;
         }
+
         return false;
     }
 
     public bool ExitsUserWithName(string name) {
-        foreach(KeyValuePair<int,User> userEntry in registeredUsers) {
-            if (userEntry.Value.Name.Equals(name)) {
-                return true;
-            }
-        }
-        return false;
+        return registeredUsers.Any(u => u.Name == name);
     }
 
     public User FindUserWithId(int id) {
-        //TODO: Not sure if return null or doesn't
-        return registeredUsers.GetValueOrDefault(id);
+        return registeredUsers.FirstOrDefault(u => u.Id == id);
     }
 
     public bool ExistsUserWithId(int id) {
-        return registeredUsers.ContainsKey(id);
+        return registeredUsers.Any(u => u.Id == id);
     }
 
-    public User[] CurrentUsers() {
-        User[] users = new User[registeredUsers.Values.Count];
-        registeredUsers.Values.CopyTo(users,0);
-        return users;
+    public List<User> CurrentUsers() {
+        return registeredUsers;
     }
-
-
 }
