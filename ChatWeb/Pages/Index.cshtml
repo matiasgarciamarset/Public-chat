@@ -76,5 +76,23 @@ PRIVATE CHAT:
 </div>
 <input type="button" id="closePrivateButton" value="Close private chat" />
 <hr>
+
+
+
+
+
+
+
+
+<form id="formUpload" name="formUpload" enctype="multipart/form-data" method="post">
+    <div class="buttons">
+        <div class="upload-button">
+            <div class="label">Click me!</div>
+            <input id="file" name="file" type="file" size="1" onchange="uploadFiles('file');" />
+        </div>
+    </div>
+</form>
+
+
 <script src="~/lib/signalr/signalr.js"></script>
 <script src="~/js/chat.js"></script>

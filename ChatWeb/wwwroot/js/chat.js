@@ -59,6 +59,11 @@ document.getElementById("sendButton").addEventListener("click", event => {
     event.preventDefault();
 });
 
+connection.on("ReceivePublicImage", (user, fileUri) => {
+    const encodedMsg = user + " sends: ";
+    printImage(encodedMsg, fileUri, "messagesList");
+});
+
 // PRIVATE CHAT
 
 connection.on("ReceiveMessage", (room, user, message) => {
@@ -143,6 +148,8 @@ connectionUser.on("RefreshUsers", () => {
 
 
 
+// INICIO DE LA CONEXION CON EL CHAT
+
 connection.start().catch(err => console.error);
 connectionUser.start().catch(err => console.error);
 
@@ -150,4 +157,41 @@ function printIn(encodedMsg, listElement) {
     const li = document.createElement("li");
     li.textContent = encodedMsg;
     document.getElementById(listElement).appendChild(li);
+}
+
+function printImage(title, imageUri, listElement) {
+    console.log(title);
+    console.log(imageUri);
+    console.log(listElement);
+
+    let li = document.createElement("li");
+    let label = document.createElement("label");
+    label.textContent = title;
+    let image = document.createElement("img");
+    image.src = window.location.protocol + '//' + window.location.host + imageUri;
+    li.appendChild(label);
+    li.appendChild(image);
+}
+
+
+// FILE UPLOAD
+
+function uploadFiles(inputId) {
+    var input = document.getElementById(inputId);
+    var files = input.files;
+    var formData = new FormData();
+    formData.append("file", files[0]);
+
+    $.ajax(
+        {
+            url: window.location.protocol + '//' + window.location.host + "/api/upload/image",
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: "POST",
+            success: function (data) {
+                connection.invoke("SendPublicImage", userId, files[0].name);
+            }
+        }
+    );
 }

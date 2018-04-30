@@ -54,12 +54,14 @@ namespace ChatWeb
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseCors("CorsPolicy");
+
             app.UseSignalR(routes =>
             {
                 routes.MapHub<ChatHub>("/chathub");
                 routes.MapHub<UserHub>("/userhub");
             });
-            app.UseMvc();
+
+            app.UseMvcWithDefaultRoute();
         }
     }
 }
