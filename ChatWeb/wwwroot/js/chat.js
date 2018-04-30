@@ -8,10 +8,10 @@ $("#private-chat").hide();
 
 // REGISTER USER
 $("#registerButton").click(event => {
-    const user = $("#userInput").val();
+    const user = $("#userName").val();
     connectionUser.invoke("LoginUser", user).then( result => {
         userId = result;
-        var encodedMsg = "Welcome to the Public chat, your ID is  " + userId;
+        var encodedMsg = "Welcome to the Public chat! Your ID is  " + userId;
         if (userId == Number(-1)) {
             encodedMsg = "ERROR: User " + user + " already exists";
         } else {
@@ -35,7 +35,7 @@ connection.on("ReceivePublicMessage", (user, message) => {
     printIn(encodedMsg, "messagesList");
 });
 
-document.getElementById("sendButton").addEventListener("click", event => {
+document.getElementById("sendMessageButton").addEventListener("click", event => {
     const message = document.getElementById("messageInput").value;
     connection.invoke("SendPublicMessage", userId, message).catch(err => console.error);
     event.preventDefault();
