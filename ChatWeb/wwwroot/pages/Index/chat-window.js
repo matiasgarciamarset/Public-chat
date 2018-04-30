@@ -54,13 +54,14 @@ function resetChat(id){
     $("#" + id + " ul").empty();
 }
 
-function initChatWindow(id) {
+function initChatWindow(id, callback) {
     $(document).ready(function () {
         $("#" + id + " .mytext").keydown(function (e) {
             if (e.which == 13) {
                 var text = $(this).val();
                 if (text !== "") {
                     insertChat(id, "me", text);
+                    callback(text);
                     $(this).val('');
                 }
             }
@@ -72,8 +73,22 @@ function initChatWindow(id) {
     });
 }
 
+$(document).ready(function () {
+    $(document).on("receivePrivateMessage", (event, message) => {
+        $("#private-chat").show();
+        insertChat("private-chat", "you", message);
+    });
+});
+
 // Init private chat
-initChatWindow("private-chat");
+initChatWindow("private-chat", (text) => {
+    sendPrivateMessage(text);
+});
+
+$("#closePrivateButton").click(event => {
+    $("#private-chat").hide();
+    closePrivateChat();
+});
 
 //-- Clear Chat
 resetChat("private-chat");
