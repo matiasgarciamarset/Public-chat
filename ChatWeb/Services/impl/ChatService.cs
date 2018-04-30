@@ -1,67 +1,55 @@
 using System.Collections.Generic;
+using System.Linq;
 
 public class ChatService : IChatService
 {
     private List<IRoom> activeRooms = new List<IRoom>();
-    private IRoom publicRoom = new UniversalRoom(0);
+    private IRoom publicRoom = new Room(0, RoomType.Universal, new List<User>());
     private int lastRoom = 1;
 
-    public IRoom getUniversalRoom() {
-        return publicRoom;
-    }
+    public IRoom UniversalRoom => publicRoom;
 
-    public IRoom CreatePrivateChat(List<User> users) {
+    public IRoom CreatePrivateChat(List<User> users)
+    {
         int currentId = lastRoom++;
-        IRoom newRoom = new PersonalRoom(currentId, users);
-        if (!activeRooms.Contains(newRoom)) {
+        IRoom newRoom = new Room(currentId, RoomType.Personal, users);
+
+        if (!activeRooms.Contains(newRoom))
+        {
             activeRooms.Add(newRoom);
         }
+
         return newRoom;
     }
 
-    public IRoom FindRoom(int id) {
-        if (publicRoom.getId().Equals(id)) {
-            return publicRoom;
-        }
-        foreach(IRoom room in activeRooms) {
-            if (room.getId().Equals(id)) {
-                return room;
-            }
-        }
-        return null;
+    public IRoom FindRoom(int id)
+    {
+        return publicRoom.Id == id ? publicRoom : activeRooms.FirstOrDefault(r => r.Id == id);
     }
 
-    public bool ExistsPrivateChatFromUser(User user) {
-        List<IRoom> rooms = roomsWithUser(user);
-        foreach(IRoom room in rooms) {
-            if (RoomType.Personal.Equals(room.getRoomType())) {
-                return true;
-            }
-        }
-        return false;
+    public bool ExistsPrivateChatFromUser(User user)
+    {
+        return RoomsWithUser(user).Any(r => r.Type == RoomType.Personal);
     }
 
-    public void RemovePrivateChatsFromhUser(User user) {
-        List<IRoom> rooms = roomsWithUser(user);
-        foreach(IRoom room in rooms) {
-            if (room.GetType().Equals(RoomType.Personal)) {
+    public void RemovePrivateChatsFromUser(User user)
+    {
+        foreach (var room in RoomsWithUser(user))
+        {
+            if (room.Type == RoomType.Personal)
+            {
                 RemoveChatRoom(room);
             }
         }
     }
 
-    public void RemoveChatRoom(IRoom room) {
+    public void RemoveChatRoom(IRoom room)
+    {
         activeRooms.Remove(room);
     }
 
-    private List<IRoom> roomsWithUser(User user) {
-        List<IRoom> list = new List<IRoom>();
-        foreach(IRoom room in activeRooms) {
-            if (room.IsMember(user)) {
-                list.Add(room);
-            }
-        }
-        return list;
+    private List<IRoom> RoomsWithUser(User user)
+    {
+        return activeRooms.Where(r => r.IsMember(user)).ToList();
     }
-
 }
