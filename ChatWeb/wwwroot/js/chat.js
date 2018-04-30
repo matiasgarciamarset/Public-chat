@@ -4,46 +4,28 @@ const connectionUser = new signalR.HubConnection("/userhub", { logger: signalR.L
 var userId = -1;
 var privateRoomId = -1;
 
-document.getElementById("messageInput").style.visibility = "hidden";
-document.getElementById("sendButton").style.visibility = "hidden";
-document.getElementById("enableChatsButton").style.visibility = "hidden";
-document.getElementById("messagePrivateInput").style.visibility = "hidden";
-document.getElementById("sendPrivateButton").style.visibility = "hidden";
-document.getElementById("createPrivateChatButton").style.visibility = "hidden";
-document.getElementById("userToInput").style.visibility = "hidden";
-document.getElementById("closePrivateButton").style.visibility = "hidden";
+$("#private-chat").hide();
 
 // REGISTER USER
-
-document.getElementById("registerButton").addEventListener("click", event => {
-    const user = document.getElementById("userInput").value;
-    connectionUser.invoke("LoginUser", user).then(function(result) {
+$("#registerButton").click(event => {
+    const user = $("#userInput").val();
+    connectionUser.invoke("LoginUser", user).then( result => {
         userId = result;
         var encodedMsg = "Welcome to the Public chat, your ID is  " + userId;
         if (userId == Number(-1)) {
-            encodedMsg = "ERROR: User "+user+" already exists";
+            encodedMsg = "ERROR: User " + user + " already exists";
         } else {
-            document.getElementById("enableChatsButton").style.visibility = "visible";
-            document.getElementById("registerButton").style.visibility = "hidden";
+            $("#public-chat").show();
+            $("#registerButton").hide();
+            connection.invoke("RegisterInChats", userId).catch(err => console.error);
         }
         printIn(encodedMsg, "logList");
     },
-    function(err) {
-        console.log(err);
-      });
+        function (err) {
+            console.log(err);
+        });
     event.preventDefault();
-    this.visible = false;
-});
-
-document.getElementById("enableChatsButton").addEventListener("click", event => {
-    connection.invoke("RegisterInChats", userId).catch(err => console.error);
-    document.getElementById("enableChatsButton").style.visibility = "hidden";
-    document.getElementById("messageInput").style.visibility = "visible";
-    document.getElementById("sendButton").style.visibility = "visible";
-    document.getElementById("userToInput").style.visibility = "visible";
-    document.getElementById("createPrivateChatButton").style.visibility = "visible";
-    document.getElementById("userInput").disabled = true;
-    event.preventDefault();
+    $(this).hide();
 });
 
 // PUBLIC  CHAT
@@ -62,70 +44,58 @@ document.getElementById("sendButton").addEventListener("click", event => {
 // PRIVATE CHAT
 
 connection.on("ReceiveMessage", (room, user, message) => {
-    debugger;
     if (privateRoomId !== room) {
-        // We have a new chat, we have to clean messages
-        var myNode = document.getElementById("messagesPrivateList");
-        while (myNode.firstChild) {
-            myNode.removeChild(myNode.firstChild);
-        }
+        $(document).trigger("receivePrivateMessage", message);
         privateRoomId = room;
-        document.getElementById("userToInput").value = user;
+        // ver que hacer con el nombre
+        $("#userToInput").val(user);
     }
     const encodedMsg = user + " says " + message;
     printIn(encodedMsg, "messagesPrivateList");
-    document.getElementById("messagePrivateInput").style.visibility = "visible";
-    document.getElementById("sendPrivateButton").style.visibility = "visible";
-    document.getElementById("closePrivateButton").style.visibility = "visible";
+
+    $("closePrivateButton").show();
 });
 
-document.getElementById("createPrivateChatButton").addEventListener("click", event => {
-    const userIdTo = document.getElementById("userToInput").value;
+$("#openPrivateChat").click(event => {
+    const userIdTo = $("#userToInput").val();
     // Close current chat an open a new one
-    connection.invoke("CreatePrivateChat", userId, userIdTo).then(function(result) {
-    if (result === Number(-1)) {
-        // There's another user talking with userIdTo
-        const encodedMsg = " ERROR: User "+userIdTo+" is busy";
-        printIn(encodedMsg, "logList");
-    } else {
-        privateRoomId = -1;
-        connection.invoke("ExitFromChat", privateRoomId, userId).catch(err => console.error);
-        privateRoomId = result;
-        const encodedMsg = " Private chat with "+userIdTo+" established";
-        printIn(encodedMsg, "logList");
-        document.getElementById("messagePrivateInput").style.visibility = "visible";
-        document.getElementById("sendPrivateButton").style.visibility = "visible";
-        document.getElementById("closePrivateButton").style.visibility = "visible";
-    }
+    connection.invoke("CreatePrivateChat", userId, userIdTo).then(result => {
+        if (result === Number(-1)) {
+            // There's another user talking with userIdTo
+            const encodedMsg = " ERROR: User " + userIdTo + " is busy";
+            printIn(encodedMsg, "logList");
+        } else {
+            privateRoomId = -1;
+            connection.invoke("ExitFromChat", privateRoomId, userId).catch(err => console.error);
+            privateRoomId = result;
+            const encodedMsg = " Private chat with " + userIdTo + " established";
+            printIn(encodedMsg, "logList");
+            $("#private-chat").show();
+            //document.getElementById("messagePrivateInput").style.visibility = "visible";
+            //document.getElementById("sendPrivateButton").style.visibility = "visible";
+            $("#closePrivateButton").show();
+        }
     },
-    function(err) {
-        console.log(err);
-    });
+        function (err) {
+            console.log(err);
+        });
     event.preventDefault();
 });
 
-document.getElementById("sendPrivateButton").addEventListener("click", event => {
-    const message = document.getElementById("messagePrivateInput").value;
+var sendPrivateMessage = message => {
     connection.invoke("SendMessage", privateRoomId, userId, message).catch(err => console.error);
     event.preventDefault();
-});
+};
 
-document.getElementById("closePrivateButton").addEventListener("click", event => {
-    connection.invoke("ExitFromChat", privateRoomId, userId).then(function(result) {
+var closePrivateChat = () => {
+    connection.invoke("ExitFromChat", privateRoomId, userId).then(function (result) {
         const encodedMsg = " Left private chat";
         printIn(encodedMsg, "logList");
-        //clean screen
-        var myNode = document.getElementById("messagesPrivateList");
-        while (myNode.firstChild) {
-            myNode.removeChild(myNode.firstChild);
-        }
     }); 
-    document.getElementById("messagePrivateInput").style.visibility = "hidden";
-    document.getElementById("sendPrivateButton").style.visibility = "hidden";
-    document.getElementById("closePrivateButton").style.visibility = "hidden";
-    document.getElementById("userToInput").value = "";
-    event.preventDefault();
-});
+
+    $("#closePrivateButton").hide();
+    $("#userToInput").val("");
+};
 
 // USER MANAGEMENT
 
@@ -146,8 +116,7 @@ connectionUser.on("RefreshUsers", () => {
 connection.start().catch(err => console.error);
 connectionUser.start().catch(err => console.error);
 
-function printIn(encodedMsg, listElement) {
-    const li = document.createElement("li");
-    li.textContent = encodedMsg;
-    document.getElementById(listElement).appendChild(li);
+var printIn = (encodedMsg, listElement) => {
+    var li = $("<li></li>").text(encodedMsg); 
+    $("#" + listElement).append(li);
 }
