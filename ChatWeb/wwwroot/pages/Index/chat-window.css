@@ -85,12 +85,12 @@
 }
 
 .chat-window .message-section .msj-rta.macro {
-    margin: auto;
+    margin-bottom: 6px;
     margin-left: 1%;
 }
 
 .chat-window ul {
-    width: 100%;
+    width: 95%;
     list-style-type: none;
     padding: 18px;
     position: absolute;
