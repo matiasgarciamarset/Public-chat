@@ -8,10 +8,10 @@ $("#private-chat").hide();
 
 // REGISTER USER
 $("#registerButton").click(event => {
-    const user = $("#userInput").val();
+    const user = $("#userName").val();
     connectionUser.invoke("LoginUser", user).then( result => {
         userId = result;
-        var encodedMsg = "Welcome to the Public chat, your ID is  " + userId;
+        var encodedMsg = "Welcome to the Public chat! Your ID is  " + userId;
         if (userId == Number(-1)) {
             encodedMsg = "ERROR: User " + user + " already exists";
         } else {
@@ -35,10 +35,15 @@ connection.on("ReceivePublicMessage", (user, message) => {
     printIn(encodedMsg, "messagesList");
 });
 
-document.getElementById("sendButton").addEventListener("click", event => {
+document.getElementById("sendMessageButton").addEventListener("click", event => {
     const message = document.getElementById("messageInput").value;
     connection.invoke("SendPublicMessage", userId, message).catch(err => console.error);
     event.preventDefault();
+});
+
+connection.on("ReceivePublicImage", (user, fileUri) => {
+    const encodedMsg = user + " sends: ";
+    printImage(encodedMsg, fileUri, "messagesList");
 });
 
 // PRIVATE CHAT
@@ -112,9 +117,47 @@ connectionUser.on("RefreshUsers", () => {
 });
 
 
+// INICIO DE LA CONEXION CON EL CHAT
 
 connection.start().catch(err => console.error);
 connectionUser.start().catch(err => console.error);
+
+function printImage(title, imageUri, listElement) {
+    console.log(title);
+    console.log(imageUri);
+    console.log(listElement);
+
+    let li = document.createElement("li");
+    let label = document.createElement("label");
+    label.textContent = title;
+    let image = document.createElement("img");
+    image.src = window.location.protocol + '//' + window.location.host + imageUri;
+    li.appendChild(label);
+    li.appendChild(image);
+}
+
+
+// FILE UPLOAD
+
+function uploadFiles(inputId) {
+    var input = document.getElementById(inputId);
+    var files = input.files;
+    var formData = new FormData();
+    formData.append("file", files[0]);
+
+    $.ajax(
+        {
+            url: window.location.protocol + '//' + window.location.host + "/api/upload/image",
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: "POST",
+            success: function (data) {
+                connection.invoke("SendPublicImage", userId, files[0].name);
+            }
+        }
+    );
+}
 
 var printIn = (encodedMsg, listElement) => {
     var li = $("<li></li>").text(encodedMsg); 

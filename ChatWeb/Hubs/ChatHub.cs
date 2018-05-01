@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Hosting;
 
 namespace ChatWeb.Hubs
 {
@@ -8,11 +9,13 @@ namespace ChatWeb.Hubs
     {
         private readonly IChatService _chatService;
         private readonly IUserService _userService;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public ChatHub(IChatService chatService, IUserService userService)
+        public ChatHub(IChatService chatService, IUserService userService, IHostingEnvironment hostingEnvironment)
         {
             _chatService = chatService;
             _userService = userService;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public async Task RegisterInChats(int userId)
@@ -72,6 +75,17 @@ namespace ChatWeb.Hubs
             {
                 var universalRoomName = _chatService.UniversalRoom.Name;
                 await Clients.Group(universalRoomName).SendAsync("ReceivePublicMessage", currentUser.Name, message);
+            }
+        }
+
+        public async Task SendPublicImage(int userId, string fileName)
+        {
+            User currentUser = _userService.FindUserWithId(userId);
+
+            if (currentUser != null)
+            {
+                var universalRoomName = _chatService.UniversalRoom.Name;
+                await Clients.Group(universalRoomName).SendAsync("ReceivePublicImage", currentUser.Name, "\\uploads\\" + fileName);
             }
         }
 

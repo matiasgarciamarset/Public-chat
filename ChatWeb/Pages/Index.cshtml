@@ -1,43 +1,76 @@
 ﻿@page
+<script src="~/js/jquery-3.3.1.js"></script>
+<script src="~/js/bootstrap-3.3.7/js/bootstrap.js"></script>
 <link href="~/js/bootstrap-3.3.7/css/bootstrap.css" rel="stylesheet" />
+
 <link href="~/pages/Index/chat-window.css" rel="stylesheet" />
+<link href="~/pages/Index/register.css" rel="stylesheet" />
+<script src="~/pages/Index/chat-window.js"></script>
+<script src="~/pages/Index/register.js"></script>
 
 <div class="row">&nbsp;</div>
 <div class="row">
     <div class="col-12">
         <ul id="logList"></ul>
     </div>
+    
+    <div class="container" style="margin-top:30px">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <strong>Welcome!</strong>
+                </h3>
+            </div>
+            <div class="panel-body">
+                <form role="form">
+                    <div class="form-group">
+                        <label>User name</label>
+                        <input type="text" class="form-control" id="userName" placeholder="Name">
+                    </div>
+                    <button type="submit" class="btn btn-sm btn-default" id="registerButton">Sign in</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
     <div class="col-12">
-        User..........<input type="text" id="userInput" />
-        <input type="button" id="registerButton" value="Register" />
-        <hr>
         CONNECTED USERS:
         <div class="col-12">
             <ul id="userList"></ul>
         </div>
+    </div>
+</div>
 
-        <hr>
-        PUBLIC CHAT:
-        <br />
-        Message...<input type="text" id="messageInput" />
-        <input type="button" id="sendButton" value="Send Message" />
-    </div>
-</div>
 <div class="row">
-    <div class="col-12">
-        <hr />
+    <div class="container" style="margin-top:30px">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <strong>Public chat</strong>
+                </h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-12">
+                        <ul id="messagesList"></ul>
+                    </div>
+                </div>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="messageInput" placeholder="Write your message here...">
+                    </div>
+                    <button type="button" class="btn btn-sm btn-default" id="sendMessageButton">Send</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
-<div class="row">
-    <div class="col-12">
-        <ul id="messagesList"></ul>
-    </div>
-</div>
+
 <hr>
 PRIVATE CHAT:
 <br />
         TO (User ID): <input type="text" id="userToInput" />
-<input type="button" id="openPrivateChat" value="Open Chat" />
+<input type="button" id="createPrivateChatButton" value="Open Chat" />
 <br />
 
 <div id="private-chat" class="chat-window col-sm-3 col-sm-offset-4 frame">
@@ -69,8 +102,22 @@ PRIVATE CHAT:
 <input type="button" id="closePrivateButton" value="Close private chat" />
 <hr>
 
-<script src="~/js/jquery-3.3.1.js"></script>
-<script src="~/js/bootstrap-3.3.7/js/bootstrap.js"></script>
+
+
+
+
+
+
+
+<form id="formUpload" name="formUpload" enctype="multipart/form-data" method="post">
+    <div class="buttons">
+        <div class="upload-button">
+            <div class="label">Click me!</div>
+            <input id="file" name="file" type="file" size="1" onchange="uploadFiles('file');" />
+        </div>
+    </div>
+</form>
+
+
 <script src="~/lib/signalr/signalr.js"></script>
 <script src="~/js/chat.js"></script>
-<script src="~/pages/Index/chat-window.js"></script>
