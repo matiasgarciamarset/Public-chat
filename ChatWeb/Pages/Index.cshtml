@@ -3,17 +3,19 @@
 <script src="~/js/bootstrap-3.3.7/js/bootstrap.js"></script>
 <link href="~/js/bootstrap-3.3.7/css/bootstrap.css" rel="stylesheet" />
 
+<link href="~/pages/Index/contact-list.css" rel="stylesheet" />
 <link href="~/pages/Index/chat-window.css" rel="stylesheet" />
 <link href="~/pages/Index/register.css" rel="stylesheet" />
 <script src="~/pages/Index/chat-window.js"></script>
 <script src="~/pages/Index/register.js"></script>
 
 <div class="row">&nbsp;</div>
+<!-- Logs y Register -->
 <div class="row">
     <div class="col-12">
         <ul id="logList"></ul>
     </div>
-    
+
     <div class="container" style="margin-top:30px">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -32,7 +34,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-12">
         CONNECTED USERS:
         <div class="col-12">
@@ -41,6 +43,7 @@
     </div>
 </div>
 
+<!-- Chat Publico -->
 <div class="row">
     <div class="container" style="margin-top:30px">
         <div class="panel panel-default">
@@ -67,47 +70,44 @@
 </div>
 
 <hr>
-PRIVATE CHAT:
-<br />
-        TO (User ID): <input type="text" id="userToInput" />
-<input type="button" id="createPrivateChatButton" value="Open Chat" />
-<br />
 
-<div id="private-chat" class="chat-window col-sm-3 col-sm-offset-4 frame">
-    <div class="frame">
-        <ul></ul>
-        <div class="message-section">
-            <div class="msj-rta macro">
-                <div class="text text-r" style="background:whitesmoke !important">
-                    <input type="text" id="messagePrivateInput" class="mytext" placeholder="Type a message" />
+<!-- Chat Privado -->
+<div class="main_section">
+    <div class="container">
+        <div class="chat_container">
+            <div class="col-sm-3 chat_sidebar">
+                <div class="row">
+                    <div class="member_list">
+                        <ul class="list-unstyled"></ul>
+                    </div>
                 </div>
             </div>
-            <div style="padding:10px;" class="send">
-                <span id="sendPrivateButton" class="send-button glyphicon glyphicon-share-alt"></span>
-            </div>
+            <!--chat_sidebar-->
+            <div id="private-chat" class="chat-window col-sm-9 message_section">
+                <div class="row frame">
+                    <div class="chat_area">
+                        <ul></ul>
+                    </div><!--chat_area-->
+                    <div class="message_write">
+                        <div class="message-section">
+                            <div class="msj-rta macro">
+                                <div class="text text-r" style="background:whitesmoke !important">
+                                    <input type="text" id="messagePrivateInput" class="mytext" placeholder="Type a message" />
+                                </div>
+                            </div>
+                            <div style="padding:10px;" class="send">
+                                <span id="sendPrivateButton" class="send-button glyphicon glyphicon-share-alt"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!--message_section-->
         </div>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-12">
-        <hr />
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <ul id="messagesPrivateList"></ul>
-    </div>
-</div>
 <input type="button" id="closePrivateButton" value="Close private chat" />
 <hr>
-
-
-
-
-
-
-
 
 <form id="formUpload" name="formUpload" enctype="multipart/form-data" method="post">
     <div class="buttons">

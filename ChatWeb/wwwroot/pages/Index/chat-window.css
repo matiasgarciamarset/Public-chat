@@ -10,21 +10,21 @@
     flex-direction: column;
 }
 
-.chat-window .text > p:first-of-type {
-    width: 100%;
-    margin-top: 0;
-    margin-bottom: auto;
-    line-height: 13px;
-    font-size: 12px;
-}
+    .chat-window .text > p:first-of-type {
+        width: 100%;
+        margin-top: 0;
+        margin-bottom: auto;
+        line-height: 13px;
+        font-size: 12px;
+    }
 
-.chat-window .text > p:last-of-type {
-    width: 100%;
-    text-align: right;
-    color: silver;
-    margin-bottom: -7px;
-    margin-top: auto;
-}
+    .chat-window .text > p:last-of-type {
+        width: 100%;
+        text-align: right;
+        color: silver;
+        margin-bottom: -7px;
+        margin-top: auto;
+    }
 
 .chat-window .text-l {
     float: left;
@@ -65,12 +65,12 @@
 
 .chat-window .frame {
     background: #e0e0de;
-    height: 450px;
+    height: 300px;
     overflow: hidden;
     padding: 0;
 }
 
-.chat-window .frame > div:last-of-type {
+.chat-window .frame .message-section {
     position: absolute;
     bottom: 0;
     width: 100%;
@@ -90,7 +90,7 @@
 }
 
 .chat-window ul {
-    width: 95%;
+    width: 100%;
     list-style-type: none;
     padding: 18px;
     position: absolute;

@@ -4,6 +4,8 @@ me.avatar = "https://lh6.googleusercontent.com/-lr2nyjhhjXw/AAAAAAAAAAI/AAAAAAAA
 var you = {};
 you.avatar = "https://a11.t26.net/taringa/avatares/9/1/2/F/7/8/Demon_King1/48x48_5C5.jpg";
 
+var currentUserIdTo = -1;
+
 function formatAMPM(date) {
     var hours = date.getHours();
     var minutes = date.getMinutes();
@@ -73,10 +75,49 @@ function initChatWindow(id, callback) {
     });
 }
 
+function insertContact(id, name) {
+    var contact = "<li class='left clearfix'>" +
+                        "<span class='chat-img pull-left'>" +
+                            "<img src='https://lh6.googleusercontent.com/-y-MY2satK-E/AAAAAAAAAAI/AAAAAAAAAJU/ER_hFddBheQ/photo.jpg' alt='User Avatar' class='img-circle'>" +
+                        "</span>" +
+                        "<input name='userId' type='hidden' value=" + id + ">" +
+                        "<div class='chat-body clearfix'>" +
+                            "<div class='header_sec'>" +
+                                "<strong class='primary-font'>" + name + "</strong>" +
+                            "</div>" +
+                        "</div>" +
+                    "</li>";
+
+    $(".chat_container .member_list ul").append(contact);
+}
+
+function clearContactList() {
+    $(".chat_container .member_list ul").empty();
+}
+
 $(document).ready(function () {
     $(document).on("receivePrivateMessage", (event, message) => {
         $("#private-chat").show();
         insertChat("private-chat", "you", message);
+    });
+
+    $(document).on("loadUser", (event, id, name) => {
+        insertContact(id, name);
+    });
+
+    $(document).on("refreshContactList", (event, id, name) => {
+        clearContactList();
+    });
+
+    $(".chat_container .member_list ul").on("click", "li", function (event) {
+        var userIdTo = $(this).find("input[name='userId']")[0].value;
+
+        if (currentUserIdTo != userIdTo) {
+            currentUserIdTo = userIdTo;
+            $("#private-chat").show();
+            createPrivateChat(userIdTo);
+        }
+        
     });
 });
 

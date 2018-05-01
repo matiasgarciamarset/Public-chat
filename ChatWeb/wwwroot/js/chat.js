@@ -62,30 +62,31 @@ connection.on("ReceiveMessage", (room, user, message) => {
 });
 
 $("#openPrivateChat").click(event => {
-    const userIdTo = $("#userToInput").val();
-    // Close current chat an open a new one
-    connection.invoke("CreatePrivateChat", userId, userIdTo).then(result => {
-        if (result === Number(-1)) {
-            // There's another user talking with userIdTo
-            const encodedMsg = " ERROR: User " + userIdTo + " is busy";
-            printIn(encodedMsg, "logList");
-        } else {
-            privateRoomId = -1;
-            connection.invoke("ExitFromChat", privateRoomId, userId).catch(err => console.error);
-            privateRoomId = result;
-            const encodedMsg = " Private chat with " + userIdTo + " established";
-            printIn(encodedMsg, "logList");
-            $("#private-chat").show();
-            //document.getElementById("messagePrivateInput").style.visibility = "visible";
-            //document.getElementById("sendPrivateButton").style.visibility = "visible";
-            $("#closePrivateButton").show();
-        }
-    },
-        function (err) {
-            console.log(err);
-        });
-    event.preventDefault();
+    
 });
+
+var createPrivateChat = (userIdTo) => {
+    if (userIdTo != userId) {
+        // Close current chat an open a new one
+        connection.invoke("CreatePrivateChat", userId, userIdTo).then(result => {
+            if (result === Number(-1)) {
+                // There's another user talking with userIdTo
+                const encodedMsg = " ERROR: User " + userIdTo + " is busy";
+                printIn(encodedMsg, "logList");
+            } else {
+                privateRoomId = -1;
+                connection.invoke("ExitFromChat", privateRoomId, userId).catch(err => console.error);
+                privateRoomId = result;
+                const encodedMsg = " Private chat with " + userIdTo + " established";
+                printIn(encodedMsg, "logList");
+                $("#private-chat").show();
+                $("#closePrivateButton").show();
+            }
+        },
+            err => console.log(err)
+        );
+    }
+};
 
 var sendPrivateMessage = message => {
     connection.invoke("SendMessage", privateRoomId, userId, message).catch(err => console.error);
@@ -107,6 +108,7 @@ var closePrivateChat = () => {
 connectionUser.on("LoadUsers", (id, name) => {
     const encodedMsg = "ID:"+ id + " | NAME: " + name;
     printIn(encodedMsg, "userList");
+    $(document).trigger("loadUser", [id, name]);
 });
 
 connectionUser.on("RefreshUsers", () => {
@@ -114,6 +116,7 @@ connectionUser.on("RefreshUsers", () => {
     while (myNode.firstChild) {
         myNode.removeChild(myNode.firstChild);
     }
+    $(document).trigger("refreshContactList");
 });
 
 
