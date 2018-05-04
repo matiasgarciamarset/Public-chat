@@ -126,11 +126,6 @@ initChatWindow("private-chat", (text) => {
     sendPrivateMessage(text);
 });
 
-$("#closePrivateButton").click(event => {
-    $("#private-chat").hide();
-    closePrivateChat();
-});
-
 //-- Clear Chat
 resetChat("private-chat");
 

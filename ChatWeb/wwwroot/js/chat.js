@@ -11,7 +11,7 @@ $("#registerButton").click(event => {
     const user = $("#userName").val();
     connectionUser.invoke("LoginUser", user).then( result => {
         userId = result;
-        var encodedMsg = "Welcome to the Public chat! Your ID is  " + userId;
+        var encodedMsg = "You can start chatting! Your ID is  " + userId;
         if (userId == Number(-1)) {
             encodedMsg = "ERROR: User " + user + " already exists";
         } else {
@@ -19,7 +19,8 @@ $("#registerButton").click(event => {
             $("#registerButton").hide();
             connection.invoke("RegisterInChats", userId).catch(err => console.error);
         }
-        printIn(encodedMsg, "logList");
+        var welcomeHeader = $("<h5></h5>").text(encodedMsg); 
+        $("#logList").append(welcomeHeader);
     },
         function (err) {
             console.log(err);
@@ -58,7 +59,12 @@ connection.on("ReceiveMessage", (room, user, message) => {
     const encodedMsg = user + " says " + message;
     printIn(encodedMsg, "messagesPrivateList");
 
-    $("closePrivateButton").show();
+    $("#closePrivateButton").show();
+});
+
+document.getElementById("closePrivateButton").addEventListener("click", event => {
+    $("#private-chat").hide();
+    closePrivateChat();
 });
 
 $("#openPrivateChat").click(event => {
@@ -106,7 +112,7 @@ var closePrivateChat = () => {
 // USER MANAGEMENT
 
 connectionUser.on("LoadUsers", (id, name) => {
-    const encodedMsg = "ID:"+ id + " | NAME: " + name;
+    const encodedMsg = name + " - ID: "+ id;
     printIn(encodedMsg, "userList");
     $(document).trigger("loadUser", [id, name]);
 });
