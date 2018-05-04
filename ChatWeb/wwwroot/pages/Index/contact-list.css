@@ -88,6 +88,12 @@
     margin-top: 0;
 }
 
+.member_list ul.me-contact li {
+    color: white;
+    background-color: steelblue;
+    cursor: auto;
+}
+
 .top_nav {
     overflow: visible;
 }

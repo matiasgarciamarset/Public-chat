@@ -4,8 +4,6 @@ const connectionUser = new signalR.HubConnection("/userhub", { logger: signalR.L
 var userId = -1;
 var privateRoomId = -1;
 
-$("#private-chat").hide();
-
 // REGISTER USER
 $("#registerButton").click(event => {
     const user = $("#userName").val();
@@ -18,6 +16,7 @@ $("#registerButton").click(event => {
             $("#public-chat").show();
             $("#registerButton").hide();
             connection.invoke("RegisterInChats", userId).catch(err => console.error);
+            $(document).trigger("registerSuccess", userId);
         }
         printIn(encodedMsg, "logList");
     },
@@ -48,15 +47,12 @@ connection.on("ReceivePublicImage", (user, fileUri) => {
 
 // PRIVATE CHAT
 
-connection.on("ReceiveMessage", (room, user, message) => {
+connection.on("ReceiveMessage", (room, userId, userName, message) => {
     if (privateRoomId !== room) {
-        $(document).trigger("receivePrivateMessage", message);
         privateRoomId = room;
-        // ver que hacer con el nombre
-        $("#userToInput").val(user);
     }
-    const encodedMsg = user + " says " + message;
-    printIn(encodedMsg, "messagesPrivateList");
+
+    $(document).trigger("receivePrivateMessage", [message, userId, userName]);
 
     $("closePrivateButton").show();
 });
@@ -100,7 +96,6 @@ var closePrivateChat = () => {
     }); 
 
     $("#closePrivateButton").hide();
-    $("#userToInput").val("");
 };
 
 // USER MANAGEMENT

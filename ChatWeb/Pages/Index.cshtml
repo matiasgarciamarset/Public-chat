@@ -72,13 +72,15 @@
 <hr>
 
 <!-- Chat Privado -->
-<div class="main_section">
+<div id="private-chat-panel" class="main_section">
     <div class="container">
         <div class="chat_container">
             <div class="col-sm-3 chat_sidebar">
                 <div class="row">
                     <div class="member_list">
-                        <ul class="list-unstyled"></ul>
+                        <h5>Users online</h5>
+                        <ul class="me-contact list-unstyled"></ul>
+                        <ul class="other-contacts list-unstyled"></ul>
                     </div>
                 </div>
             </div>
@@ -105,9 +107,6 @@
         </div>
     </div>
 </div>
-
-<input type="button" id="closePrivateButton" value="Close private chat" />
-<hr>
 
 <form id="formUpload" name="formUpload" enctype="multipart/form-data" method="post">
     <div class="buttons">

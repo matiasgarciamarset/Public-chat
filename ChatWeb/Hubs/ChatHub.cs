@@ -97,7 +97,7 @@ namespace ChatWeb.Hubs
             if (currentUser != null && room != null && room.IsMember(currentUser))
             {
                 var roomName = room.Name;
-                await Clients.Group(roomName).SendAsync("ReceiveMessage", room.Id, currentUser.Name, message);
+                await Clients.Group(roomName).SendAsync("ReceiveMessage", room.Id, currentUser.Id, currentUser.Name, message);
             }
         }
 

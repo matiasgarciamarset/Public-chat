@@ -1,10 +1,7 @@
-var me = {};
-me.avatar = "https://lh6.googleusercontent.com/-lr2nyjhhjXw/AAAAAAAAAAI/AAAAAAAARmE/MdtfUmC0M4s/photo.jpg?sz=48";
-
-var you = {};
-you.avatar = "https://a11.t26.net/taringa/avatares/9/1/2/F/7/8/Demon_King1/48x48_5C5.jpg";
-
-var currentUserIdTo = -1;
+var contactIcon = "images/contact.jpg",
+    currentUserId = -1,
+    currentUserIdTo = -1,
+    users = [];
 
 function formatAMPM(date) {
     var hours = date.getHours();
@@ -18,20 +15,20 @@ function formatAMPM(date) {
 }            
 
 //-- No use time. It is a javaScript effect.
-function insertChat(id, who, text, time){
-    if (time === undefined){
-        time = 0;
-    }
+function insertChat(id, who, text, user){
     var control = "";
     var date = formatAMPM(new Date());
-    
+
     if (who == "me"){
         control = '<li>' +
                         '<div class="msj macro">' +
-                        '<div class="avatar"><img class="img-circle" src="'+ me.avatar +'" /></div>' +
+                            '<div class="avatar chat-img"><img class="img-circle" src="' + contactIcon +'" /></div>' +
                             '<div class="text text-l">' +
-                                '<p>'+ text +'</p>' +
-                                '<p><small>'+date+'</small></p>' +
+                                '<p class="name">' +
+                                    "<strong class='primary-font'>" + user.name + "</strong>" +
+                                '</p>' +
+                                '<p class="message">'+ text +'</p>' +
+                                '<p class="time"><small>'+date+'</small></p>' +
                             '</div>' +
                         '</div>' +
                     '</li>';                    
@@ -39,16 +36,19 @@ function insertChat(id, who, text, time){
         control = '<li>' +
                         '<div class="msj-rta macro">' +
                             '<div class="text text-r">' +
-                                '<p>'+text+'</p>' +
-                                '<p><small>'+date+'</small></p>' +
+                                '<p class="name">' +
+                                    "<strong class='primary-font'>" + user.name + "</strong>" +
+                                '</p>' +
+                                '<p class="message">'+ text +'</p>' +
+                                '<p class="time"><small>'+date+'</small></p>' +
                             '</div>' +
-                        '<div class="avatar" style="padding:0px 0px 0px 10px !important"><img class="img-circle" src="'+you.avatar+'" /></div>' +                                
+                        '<div class="avatar chat-img" style="padding:0px 0px 0px 10px !important"><img class="img-circle" src="'+ contactIcon +'" /></div>' +                                
                   '</li>';
     }
-    setTimeout(
-        function(){                        
-            $("#" + id + " ul").append(control).scrollTop($("#" + id + " ul").prop('scrollHeight'));
-        }, time);
+
+    if (!(who == "you" && user.id == currentUserId)) {
+        $("#" + id + " ul").append(control).scrollTop($("#" + id + " ul").prop('scrollHeight'));    
+    }
     
 }
 
@@ -62,7 +62,8 @@ function initChatWindow(id, callback) {
             if (e.which == 13) {
                 var text = $(this).val();
                 if (text !== "") {
-                    insertChat(id, "me", text);
+                    var userName = $("#userName").val();
+                    insertChat(id, "me", text, { id: 0, name: userName });
                     callback(text);
                     $(this).val('');
                 }
@@ -76,9 +77,10 @@ function initChatWindow(id, callback) {
 }
 
 function insertContact(id, name) {
-    var contact = "<li class='left clearfix'>" +
+    var contactClass = id == currentUserId ? "me-contact" : "other-contacts",
+        contact = "<li class='left clearfix'>" +
                         "<span class='chat-img pull-left'>" +
-                            "<img src='https://lh6.googleusercontent.com/-y-MY2satK-E/AAAAAAAAAAI/AAAAAAAAAJU/ER_hFddBheQ/photo.jpg' alt='User Avatar' class='img-circle'>" +
+                            "<img src='" + contactIcon + "' alt='User Avatar' class='img-circle'>" +
                         "</span>" +
                         "<input name='userId' type='hidden' value=" + id + ">" +
                         "<div class='chat-body clearfix'>" +
@@ -88,7 +90,7 @@ function insertContact(id, name) {
                         "</div>" +
                     "</li>";
 
-    $(".chat_container .member_list ul").append(contact);
+    $(".chat_container .member_list ul." + contactClass).append(contact);
 }
 
 function clearContactList() {
@@ -96,23 +98,40 @@ function clearContactList() {
 }
 
 $(document).ready(function () {
-    $(document).on("receivePrivateMessage", (event, message) => {
+    $("#private-chat").hide();
+    $("#private-chat-panel").hide();
+
+    $(document).on("receivePrivateMessage", (event, message, id, user) => {
         $("#private-chat").show();
-        insertChat("private-chat", "you", message);
+        insertChat("private-chat", "you", message, { id: id, name: user});
     });
 
     $(document).on("loadUser", (event, id, name) => {
-        insertContact(id, name);
+        if (currentUserId == -1) {
+            users.push({ id: id, name: name });
+        }
+        else {
+            insertContact(id, name);
+        }
     });
 
     $(document).on("refreshContactList", (event, id, name) => {
         clearContactList();
+        users = [];
+    });
+
+    $(document).on("registerSuccess", (event, id) => {
+        currentUserId = id;
+        $("#private-chat-panel").show();
+        users.forEach(function (user) {
+            insertContact(user.id, user.name);
+        });
     });
 
     $(".chat_container .member_list ul").on("click", "li", function (event) {
         var userIdTo = $(this).find("input[name='userId']")[0].value;
 
-        if (currentUserIdTo != userIdTo) {
+        if (currentUserIdTo != userIdTo && currentUserId != userIdTo) {
             currentUserIdTo = userIdTo;
             $("#private-chat").show();
             createPrivateChat(userIdTo);
