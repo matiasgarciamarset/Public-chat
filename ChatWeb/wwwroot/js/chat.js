@@ -5,6 +5,10 @@ var userId = -1;
 var privateRoomId = -1;
 var contactIcon = "images/contact.jpg";
 
+$("#private-chat-panel").hide();
+$("#public-chat-panel").hide();
+$("#users-panel").hide();
+
 // REGISTER USER
 $("#registerButton").click(event => {
     const user = $("#userName").val();
@@ -12,15 +16,19 @@ $("#registerButton").click(event => {
         userId = result;
         var encodedMsg = "You can start chatting! Your ID is  " + userId;
         if (userId == Number(-1)) {
-            encodedMsg = "ERROR: User " + user + " already exists";
+            encodedMsg = " User " + user + " already exists";
+            printErrorRegister(encodedMsg);
         } else {
             $("#public-chat").show();
+            $("#private-chat-panel").show();
+            $("#public-chat-panel").show();
+            $("#users-panel").show();
             $("#registerButton").hide();
+            document.getElementById("userName").disabled = true;
             connection.invoke("RegisterInChats", userId).catch(err => console.error);
             $(document).trigger("registerSuccess", userId);
+            printInfoRegister(encodedMsg);
         }
-        var welcomeHeader = $("<h5></h5>").text(encodedMsg); 
-        $("#logList").append(welcomeHeader);
     },
         function (err) {
             console.log(err);
@@ -55,20 +63,8 @@ connection.on("ReceiveMessage", (room, userId, userName, message) => {
     }
     $(document).trigger("receivePrivateMessage", [message, userId, userName]);
 
-    //$("#closePrivateButton").show();
 });
 
-<<<<<<< HEAD
-//document.getElementById("closePrivateButton").addEventListener("click", event => {
-//    $("#private-chat").hide();
-//    closePrivateChat();
-//});
-
-=======
->>>>>>> b3f02bf5beb0eaf4fa54ef1264e451ad87ee672a
-$("#openPrivateChat").click(event => {
-    
-});
 
 var createPrivateChat = (userIdTo) => {
     if (userIdTo != userId) {
@@ -76,19 +72,19 @@ var createPrivateChat = (userIdTo) => {
         connection.invoke("CreatePrivateChat", userId, userIdTo).then(result => {
             if (result === Number(-1)) {
                 // There's another user talking with userIdTo
-                const encodedMsg = " ERROR: User " + userIdTo + " is busy";
-                printIn(encodedMsg, "logList");
+                const encodedMsg = "User " + userIdTo + " is busy";
+                printErrorPrivateChat(encodedMsg);
+                $("#private-chat").hide();
             } else {
                 if (privateRoomId != -1) {
                     connection.invoke("ExitFromChat", privateRoomId, userId).catch(err => console.error);
                     privateRoomId = -1;
                 }
                 privateRoomId = result;
-                const encodedMsg = " Private chat with " + userIdTo + " established";
-                printIn(encodedMsg, "logList");
+                const encodedMsg = " Private chat established";
+                printInfoPrivateChat(encodedMsg);
                 $(document).trigger("cleanPrivateWindows");
                 $("#private-chat").show();
-                $("#closePrivateButton").show();
             }
         },
             err => console.log(err)
@@ -99,7 +95,7 @@ var createPrivateChat = (userIdTo) => {
 var sendPrivateMessage = message => {
     connection.invoke("SendMessage", privateRoomId, userId, message).then(function (result) {
         if (!result) {
-            $(document).trigger("receivePrivateAlertMessage", ["Error sending message: Used disconnected", userId, userName]);
+            $(document).trigger("receivePrivateAlertMessage", ["Error sending message: User disconected", userId, userName]);
         }
     });
     event.preventDefault();
@@ -108,8 +104,6 @@ var sendPrivateMessage = message => {
 var closePrivateChat = () => {
     connection.invoke("ExitFromChat", privateRoomId, userId).then(function (result) {
         $(document).trigger("cleanPrivateWindows");
-        const encodedMsg = " Left private chat";
-        printIn(encodedMsg, "logList");
     }); 
 };
 
@@ -119,7 +113,8 @@ connectionUser.on("LoadUsers", (id, name) => {
     const newUser = 
         '<div class="user">' + 
             '<img class="img-circle" src="' + contactIcon +'"/>' +
-            '<p class="message">'+  name + " - ID: "+ id +'</p>' +
+            " [ID: "+ id +']</p>' +
+            "<p class='message'> <strong class='primary-font'>" + name + "</strong>" +
         '</div>';
     $("#userList").append(newUser);
     $(document).trigger("loadUser", [id, name]);
@@ -179,4 +174,36 @@ function uploadFiles(inputId) {
 var printIn = (encodedMsg, listElement) => {
     var li = $("<li></li>").text(encodedMsg); 
     $("#" + listElement).append(li);
+}
+
+var printErrorPrivateChat = (msg) => {
+    var all = '<div class="alert alert-danger alert-dismissible">' +
+                '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' +
+                '<strong>ERROR</strong> ' + msg +
+              '</div>';
+    $(".privateLog").html(all);
+}
+
+var printInfoPrivateChat = (msg) => {
+    var all = '<div class="alert alert-success alert-dismissible">' +
+                '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' +
+                '<strong>OK</strong> ' + msg +
+              '</div>';
+    $(".privateLog").html(all);
+}
+
+var printErrorRegister = (msg) => {
+    var all = '<div class="alert alert-danger alert-dismissible">' +
+                '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' +
+                '<strong>ERROR</strong> ' + msg +
+              '</div>';
+    $(".registerLog").html(all);
+}
+
+var printInfoRegister = (msg) => {
+    var all = '<div class="alert alert-success alert-dismissible">' +
+                '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>' +
+                '<strong>OK</strong> ' + msg +
+              '</div>';
+    $(".registerLog").html(all);
 }

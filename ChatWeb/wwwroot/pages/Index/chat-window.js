@@ -131,7 +131,6 @@ $(document).ready(function () {
     });
 
     $(document).on("receivePrivateAlertMessage", (event, message, id, user) => {
-        debugger;
         $("#private-chat").show();
         insertChat("private-chat", "you", message, { id: id, name: user}, true);
     });
