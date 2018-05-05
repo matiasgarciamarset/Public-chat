@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+
 public class Room : IRoom
 {
     protected int Id;
@@ -21,9 +23,9 @@ public class Room : IRoom
     {
         get
         {
-            Members.Sort();
             string result = "channel_" + Type.ToString() + "_";
-            foreach (User user in Members)
+
+            foreach (User user in Members.OrderBy(u => u.Id))
             {
                 result += user.ConnectionId + "+";
             }
