@@ -97,17 +97,18 @@ function initChatWindow(id, callback) {
 // Inserta un nuevo contacto en la lista de contactos
 function insertContact(id, name) {
     var contactClass = id == ChatManager.userId ? "me-contact" : "other-contacts",
-        contact = "<li class='left clearfix'>" +
-            "<span class='chat-img pull-left'>" +
-            "<img src='" + contactIcon + "' alt='User Avatar' class='img-circle'>" +
-            "</span>" +
-            "<input name='userId' type='hidden' value=" + id + ">" +
-            "<div class='chat-body clearfix'>" +
-            "<div class='header_sec'>" +
-            "<strong class='primary-font'>" + name + "</strong>" +
-            "</div>" +
-            "</div>" +
-            "</li>";
+        contactActive = id == currentUserIdTo ? " contact-active" : "";
+        contact = "<li class='left clearfix" + contactActive + "'>" +
+                        "<span class='chat-img pull-left'>" +
+                            "<img src='" + contactIcon + "' alt='User Avatar' class='img-circle'>" +
+                        "</span>" +
+                        "<input name='userId' type='hidden' value=" + id + ">" +
+                        "<div class='chat-body clearfix'>" +
+                            "<div class='header_sec'>" +
+                                "<strong class='primary-font'>" + name + "</strong>" +
+                            "</div>" +
+                        "</div>" +
+                    "</li>";
 
     $(".chat_container .member_list ul." + contactClass).append(contact);
 }
@@ -188,6 +189,11 @@ var printInfoRegister = (msg) => {
     $(".registerLog").html(all);
 }
 
+var activateContact = contactCard => {
+    contactCard.addClass("contact-active");
+    contactCard.siblings().each((index, sibling) => $(sibling).removeClass("contact-active"));
+}
+
 $(document).ready(function () {
     $("#private-chat").hide();
     $("#private-chat-panel").hide();
@@ -195,6 +201,15 @@ $(document).ready(function () {
     $("#users-panel").hide();
 
     $(document).on("receivePrivateMessage", (event, message, id, user) => {
+        var inputWithId = $(".member_list ul").find("input[name='userId'][value=" + id + "]")[0],
+            contactCard = $(inputWithId).parent();
+
+        if (id != ChatManager.userId) {
+            contactCard.addClass("contact-active");
+            contactCard.siblings().each((index, sibling) => $(sibling).removeClass("contact-active"));
+            currentUserIdTo = id;
+        }
+
         $("#private-chat").show();
         insertChat("private-chat", "you", message, { id: id, name: user }, false);
     });
@@ -243,6 +258,7 @@ $(document).ready(function () {
 
     $(".chat_container .member_list ul").on("click", "li", function (event) {
         var userIdTo = $(this).find("input[name='userId']")[0].value;
+        activateContact($(this));
 
         if (currentUserIdTo != userIdTo && ChatManager.userId != userIdTo) {
             currentUserIdTo = userIdTo;
