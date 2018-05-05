@@ -152,3 +152,7 @@
 .chat-window:-moz-placeholder { /* Firefox 18- */
     color: #d4d4d4;
 }
+
+#messagesList img {
+    width: 80%
+}
