@@ -3,6 +3,7 @@ const connectionUser = new signalR.HubConnection("/userhub", { logger: signalR.L
 
 var userId = -1;
 var privateRoomId = -1;
+var contactIcon = "images/contact.jpg";
 
 // REGISTER USER
 $("#registerButton").click(event => {
@@ -58,11 +59,6 @@ connection.on("ReceiveMessage", (room, userId, userName, message) => {
     $("#closePrivateButton").show();
 });
 
-document.getElementById("closePrivateButton").addEventListener("click", event => {
-    $("#private-chat").hide();
-    closePrivateChat();
-});
-
 $("#openPrivateChat").click(event => {
     
 });
@@ -107,8 +103,12 @@ var closePrivateChat = () => {
 // USER MANAGEMENT
 
 connectionUser.on("LoadUsers", (id, name) => {
-    const encodedMsg = name + " - ID: "+ id;
-    printIn(encodedMsg, "userList");
+    const newUser = 
+        '<div class="user">' + 
+            '<img class="img-circle" src="' + contactIcon +'"/>' +
+            '<p class="message">'+  name + " - ID: "+ id +'</p>' +
+        '</div>';
+    $("#userList").append(newUser);
     $(document).trigger("loadUser", [id, name]);
 });
 
