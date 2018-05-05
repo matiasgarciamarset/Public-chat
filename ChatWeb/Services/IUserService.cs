@@ -5,7 +5,7 @@ public interface IUserService
     /*
         Create a new user in the system. This method acepts two users with the same name.
      */
-    int CreateUser(string userName);
+    int CreateUser(string userName, int age, string city);
 
     /*
         Delete a user from the system.

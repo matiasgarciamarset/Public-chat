@@ -6,13 +6,15 @@ public class UserService : IUserService
     private List<User> registeredUsers = new List<User>();
     private int lastId = 0;
 
-    public int CreateUser(string userName) {
+    public int CreateUser(string userName, int age, string city) {
         int currentValue = lastId++;
 
         registeredUsers.Add(new User
         {
             Id = currentValue,
-            Name = userName
+            Name = userName,
+            Age = age, 
+            City = city
         });
 
         return currentValue;

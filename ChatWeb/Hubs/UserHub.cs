@@ -15,11 +15,11 @@ namespace ChatWeb.Hubs
             _userService = userService;
         }
 
-        public async Task<int> LoginUser(string userName)
+        public async Task<int> LoginUser(string userName, int age, string city)
         {
             if (!_userService.ExitsUserWithName(userName))
             {
-                int id = _userService.CreateUser(userName);
+                int id = _userService.CreateUser(userName, age, city);
                 await Clients.All.SendAsync("RefreshUsers");
                 await CurrentUsers();
                 return id;
@@ -43,7 +43,7 @@ namespace ChatWeb.Hubs
         {
             foreach (User user in _userService.CurrentUsers())
             {
-                await Clients.All.SendAsync("LoadUsers", user.Id, user.Name);
+                await Clients.All.SendAsync("LoadUsers", user.Id, user.Name, user.Age, user.City);
             }
         }
     }

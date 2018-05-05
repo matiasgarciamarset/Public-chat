@@ -11,12 +11,15 @@ $("#users-panel").hide();
 
 // REGISTER USER
 $("#registerButton").click(event => {
-    const user = $("#userName").val();
-    connectionUser.invoke("LoginUser", user).then( result => {
+    const userName = $("#userName").val();
+    const userAge = $("#userAge").val();
+    const userCity = $("#userCity").val();
+    
+    connectionUser.invoke("LoginUser", userName, userAge, userCity).then( result => {
         userId = result;
         var encodedMsg = "You can start chatting! Your ID is  " + userId;
         if (userId == Number(-1)) {
-            encodedMsg = " User " + user + " already exists";
+            encodedMsg = " User " + userName + " already exists";
             printErrorRegister(encodedMsg);
         } else {
             $("#public-chat").show();
@@ -24,7 +27,11 @@ $("#registerButton").click(event => {
             $("#public-chat-panel").show();
             $("#users-panel").show();
             $("#registerButton").hide();
+            
             document.getElementById("userName").disabled = true;
+            document.getElementById("userAge").disabled = true;
+            document.getElementById("userCity").disabled = true;
+            
             connection.invoke("RegisterInChats", userId).catch(err => console.error);
             $(document).trigger("registerSuccess", userId);
             printInfoRegister(encodedMsg);
@@ -109,12 +116,15 @@ var closePrivateChat = () => {
 
 // USER MANAGEMENT
 
-connectionUser.on("LoadUsers", (id, name) => {
+connectionUser.on("LoadUsers", (id, name, age, city) => {
     const newUser = 
         '<div class="user">' + 
             '<img class="img-circle" src="' + contactIcon +'"/>' +
-            " [ID: "+ id +']</p>' +
-            "<p class='message'> <strong class='primary-font'>" + name + "</strong>" +
+            " [ID: "+ id +']' +
+            "<p class='message'>" +
+                "<strong class='primary-font'>" + name + "</strong>" +
+                " - " + age + " años" + " - " + city +
+            "</p>" +
         '</div>';
     $("#userList").append(newUser);
     $(document).trigger("loadUser", [id, name]);
