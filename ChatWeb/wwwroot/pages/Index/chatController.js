@@ -203,9 +203,12 @@ $(document).ready(function () {
         resetChat("private-chat");
     });
 
-    $(document).on("receivePublicMessage", (event, userName, message) => {
-        const encodedMsg = userName + " says " + message;
-        printIn(encodedMsg, "messagesList");
+    $(document).on("receivePublicMessage", (event, message, id, userName, userId) => {
+        if (id == userId) {
+            insertChat("public-chat", "me", message, { id: userId, name: userName }, false);
+        } else {
+            insertChat("public-chat", "you", message, { id: userId, name: userName }, false);
+        }
     });
 
     $(document).on("receivePublicImage", (event, user, fileUri) => {
@@ -213,9 +216,7 @@ $(document).ready(function () {
         printImage(encodedMsg, fileUri, "messagesList");
     });
 
-    $(document).on("loadUser", (event, id, name) => {
-        /*
-         // Ver si esto va
+    $(document).on("loadUser", (event, id, name, age, city) => {
         const newUser =
             '<div class="user">' +
             '<img class="img-circle" src="' + contactIcon + '"/>' +
@@ -226,7 +227,7 @@ $(document).ready(function () {
             "</p>" +
             '</div>';
         $("#userList").append(newUser);
-        */
+
         if (ChatManager.userId == -1) {
             users.push({ id: id, name: name });
         }

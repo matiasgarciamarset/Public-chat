@@ -20,8 +20,8 @@ let loginUserCallback = (result, def) => {
 connection.start().catch(err => def.reject({ type: "error-unexpected", text: error }))
 connectionUser.start().catch(err => def.reject({ type: "error-unexpected", text: error }))
 
-connection.on("ReceivePublicMessage", (userName, message) => {
-    $(document).trigger("receivePublicMessage", [userName, message]);
+connection.on("ReceivePublicMessage", (userNameSender, userIdSender, message) => {
+  $(document).trigger("receivePublicMessage", [message, userId, userNameSender, userIdSender])
 });
 
 connection.on("ReceivePublicImage", (user, fileUri) => {
