@@ -46,9 +46,8 @@ $("#registerButton").click(event => {
 
 // PUBLIC  CHAT
 
-connection.on("ReceivePublicMessage", (user, message) => {
-    const encodedMsg = user + " says " + message;
-    printIn(encodedMsg, "messagesList");
+connection.on("ReceivePublicMessage", (userNameSender, userIdSender, message) => {
+    $(document).trigger("receivePublicMessage", [message, userId, userNameSender, userIdSender])
 });
 
 document.getElementById("sendMessageButton").addEventListener("click", event => {
