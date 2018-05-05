@@ -126,6 +126,14 @@ $(document).ready(function () {
         insertChat("private-chat", "you", message, { id: id, name: user}, false);
     });
 
+    $(document).on("receivePublicMessage", (event, message, id, userName, userId) => {
+        if (id == userId) {
+            insertChat("public-chat", "me", message, { id: userId, name: userName}, false);    
+        } else {
+            insertChat("public-chat", "you", message, { id: userId, name: userName}, false);        
+        }
+    });
+
     $(document).on("cleanPrivateWindows", (event, message, id, user) => {
         resetChat("private-chat");
     });

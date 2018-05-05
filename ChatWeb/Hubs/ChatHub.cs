@@ -73,7 +73,7 @@ namespace ChatWeb.Hubs
             if (currentUser != null)
             {
                 var universalRoomName = _chatService.UniversalRoom.Name;
-                await Clients.Group(universalRoomName).SendAsync("ReceivePublicMessage", currentUser.Name, message);
+                await Clients.Group(universalRoomName).SendAsync("ReceivePublicMessage", currentUser.Name, currentUser.Id, message);
             }
         }
 
