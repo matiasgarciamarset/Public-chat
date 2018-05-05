@@ -69,24 +69,38 @@
                     <strong>Public chat</strong>
                 </h3>
             </div>
+
             <div class="panel-body">
-                <div class="row">
-                    <div class="col-12">
-                        <ul id="messagesList"></ul>
+                <div class="chat_container">
+                    <div id="public-chat" class="chat-window col-sm-12 message_section">
+                        <div class="row frame">
+                            <div class="chat_area">
+                                <ul id="messagesList"></ul>
+                            </div>
+                            <div class="message_write">
+                                <div class="message-section">
+                                    <div class="msj-rta macro">
+                                        <div class="text text-r" style="background:whitesmoke !important">
+                                            <input type="text" id="messageInput" class="mytext" placeholder="Type a message" />
+                                        </div>
+                                    </div>
+                                    <div style="padding:10px;" class="send">
+                                        <span id="sendMessageButton" class="send-button glyphicon glyphicon-share-alt"></span>
+                                    </div>
+                                    <div class="upload-button">
+                                        <label class="btn btn-primary">Upload files&hellip; 
+                                            <input id="file" name="file" type="file" size="1" onchange="uploadFiles('file')" style="display: none;">
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <form role="form">
-                    <div class="form-group">
-                        <input type="text" class="form-control" id="messageInput" placeholder="Write your message here...">
-                    </div>
-                    <button type="button" class="btn btn-sm btn-default" id="sendMessageButton">Send</button>
-                </form>
-            </div>
         </div>
     </div>
 </div>
-
-<hr>
 
 <!-- Chat Privado -->
 <div id="private-chat-panel" class="row main_section">
@@ -134,18 +148,6 @@
         </div>
     </div>
 </div>
-
-<hr>
-
-<form id="formUpload" name="formUpload" enctype="multipart/form-data" method="post">
-    <div class="buttons">
-        <div class="upload-button">
-            <div class="label">Click me!</div>
-            <input id="file" name="file" type="file" size="1" onchange="uploadFiles('file');" />
-        </div>
-    </div>
-</form>
-
 
 <script src="~/lib/signalr/signalr.js"></script>
 <script src="~/js/chat.js"></script>
