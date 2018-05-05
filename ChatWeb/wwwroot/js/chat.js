@@ -52,16 +52,15 @@ connection.on("ReceiveMessage", (room, userId, userName, message) => {
     if (privateRoomId !== room) {
         privateRoomId = room;
     }
-
     $(document).trigger("receivePrivateMessage", [message, userId, userName]);
 
-    $("#closePrivateButton").show();
+    //$("#closePrivateButton").show();
 });
 
-document.getElementById("closePrivateButton").addEventListener("click", event => {
-    $("#private-chat").hide();
-    closePrivateChat();
-});
+//document.getElementById("closePrivateButton").addEventListener("click", event => {
+//    $("#private-chat").hide();
+//    closePrivateChat();
+//});
 
 $("#openPrivateChat").click(event => {
     
@@ -76,11 +75,14 @@ var createPrivateChat = (userIdTo) => {
                 const encodedMsg = " ERROR: User " + userIdTo + " is busy";
                 printIn(encodedMsg, "logList");
             } else {
-                privateRoomId = -1;
-                connection.invoke("ExitFromChat", privateRoomId, userId).catch(err => console.error);
+                if (privateRoomId != -1) {
+                    connection.invoke("ExitFromChat", privateRoomId, userId).catch(err => console.error);
+                    privateRoomId = -1;
+                }
                 privateRoomId = result;
                 const encodedMsg = " Private chat with " + userIdTo + " established";
                 printIn(encodedMsg, "logList");
+                $(document).trigger("cleanPrivateWindows");
                 $("#private-chat").show();
                 $("#closePrivateButton").show();
             }
@@ -91,17 +93,20 @@ var createPrivateChat = (userIdTo) => {
 };
 
 var sendPrivateMessage = message => {
-    connection.invoke("SendMessage", privateRoomId, userId, message).catch(err => console.error);
+    connection.invoke("SendMessage", privateRoomId, userId, message).then(function (result) {
+        if (!result) {
+            $(document).trigger("receivePrivateAlertMessage", ["Error sending message: Used disconnected", userId, userName]);
+        }
+    });
     event.preventDefault();
 };
 
 var closePrivateChat = () => {
     connection.invoke("ExitFromChat", privateRoomId, userId).then(function (result) {
+        $(document).trigger("cleanPrivateWindows");
         const encodedMsg = " Left private chat";
         printIn(encodedMsg, "logList");
     }); 
-
-    $("#closePrivateButton").hide();
 };
 
 // USER MANAGEMENT

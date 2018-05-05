@@ -55,7 +55,6 @@ namespace ChatWeb.Hubs
 
             if (currentUser != null && room != null)
             {
-                await SendMessage(room.Id, userId, "< Left Chat >");
                 room.RemoveUser(currentUser);
 
                 if (room.UserCount <= 1)
@@ -89,7 +88,7 @@ namespace ChatWeb.Hubs
             }
         }
 
-        public async Task SendMessage(int roomId, int userId, string message)
+        public async Task<bool> SendMessage(int roomId, int userId, string message)
         {
             User currentUser = _userService.FindUserWithId(userId);
             IRoom room = _chatService.FindRoom(roomId);
@@ -98,7 +97,9 @@ namespace ChatWeb.Hubs
             {
                 var roomName = room.Name;
                 await Clients.Group(roomName).SendAsync("ReceiveMessage", room.Id, currentUser.Id, currentUser.Name, message);
+                return true;
             }
+            return false;
         }
 
     }
