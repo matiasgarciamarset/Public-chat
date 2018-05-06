@@ -60,6 +60,23 @@ function insertChat(id, who, message, userName) {
             '</li>';
     }
 
+    if (who == "me-image") {
+        control = '<li>' +
+            '<div class="msj macro">' +
+            '<div class="avatar chat-img"><img class="img-circle" src="' + contactIcon + '" /></div>' +
+            '<div class="text text-l">' +
+            '<p class="name">' +
+            "<strong class='primary-font'>" + userName + "</strong>" +
+            '</p>' +
+            '<p class="message">' +
+                "<img src='" + message + "'>" +
+            '</p>' +
+            '<p class="time"><small>' + date + '</small></p>' +
+            '</div>' +
+            '</div>' +
+            '</li>';
+    }
+
     if (who == "you-image") {
         control = '<li>' +
             '<div class="msj-rta macro">' +
@@ -236,8 +253,11 @@ $(document).ready(function () {
         printImage(encodedMsg, fileUri, "messagesList");
     });
 
-    $(document).on("receivePrivateImage", (event, roomId, userId, userName, fileUri) => {
-        insertChat("private-chat", "you-image", fileUri, userName);
+    $(document).on("receivePrivateImage", (event, roomId, userToId, userToName, fileUri) => {
+        var from = ChatManager.userId == userToId ? "me-image" : "you-image";
+
+        $("#private-chat").show();
+        insertChat("private-chat", from, fileUri, userToName);
     });
 
     $(document).on("loadUser", (event, id, name, age, city) => {
