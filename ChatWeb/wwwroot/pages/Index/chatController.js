@@ -1,6 +1,5 @@
 ﻿var contactIcon = "images/contact.jpg",
     users = [],
-    currentUserIdTo = -1,
     alertIcon = "images/alertIcon.png";
 
 function formatAMPM(date) {
@@ -14,56 +13,71 @@ function formatAMPM(date) {
     return strTime;
 }
 
-function insertChat(id, who, text, user, isAlert) {
-    var control = "";
-    var date = formatAMPM(new Date());
-    if (!isAlert) {
-        if (who == "me") {
-            control = '<li>' +
-                '<div class="msj macro">' +
-                '<div class="avatar chat-img"><img class="img-circle" src="' + contactIcon + '" /></div>' +
-                '<div class="text text-l">' +
-                '<p class="name">' +
-                "<strong class='primary-font'>" + user.name + "</strong>" +
-                '</p>' +
-                '<p class="message">' + text + '</p>' +
-                '<p class="time"><small>' + date + '</small></p>' +
-                '</div>' +
-                '</div>' +
-                '</li>';
-        } else {
-            control = '<li>' +
-                '<div class="msj-rta macro">' +
-                '<div class="text text-r">' +
-                '<p class="name">' +
-                "<strong class='primary-font'>" + user.name + "</strong>" +
-                '</p>' +
-                '<p class="message">' + text + '</p>' +
-                '<p class="time"><small>' + date + '</small></p>' +
-                '</div>' +
-                '<div class="avatar chat-img" style="padding:0px 0px 0px 10px !important"><img class="img-circle" src="' + contactIcon + '" /></div>' +
-                '</li>';
-        }
+function insertChat(id, who, message, userName) {
+    var control = "",
+        date = formatAMPM(new Date());
 
-        if (!(who == "you" && user.id == ChatManager.userId)) {
-            $("#" + id + " ul").append(control).scrollTop($("#" + id + " ul").prop('scrollHeight'));
-        }
-    } else {
+    if (who == "me") {
+        control = '<li>' +
+            '<div class="msj macro">' +
+            '<div class="avatar chat-img"><img class="img-circle" src="' + contactIcon + '" /></div>' +
+            '<div class="text text-l">' +
+            '<p class="name">' +
+            "<strong class='primary-font'>" + userName + "</strong>" +
+            '</p>' +
+            '<p class="message">' + message + '</p>' +
+            '<p class="time"><small>' + date + '</small></p>' +
+            '</div>' +
+            '</div>' +
+            '</li>';
+    }
+
+    if (who == "you") {
+        control = '<li>' +
+            '<div class="msj-rta macro">' +
+            '<div class="text text-r">' +
+            '<p class="name">' +
+            "<strong class='primary-font'>" + userName + "</strong>" +
+            '</p>' +
+            '<p class="message">' + message + '</p>' +
+            '<p class="time"><small>' + date + '</small></p>' +
+            '</div>' +
+            '<div class="avatar chat-img" style="padding:0px 0px 0px 10px !important"><img class="img-circle" src="' + contactIcon + '" /></div>' +
+            '</li>';
+    }
+
+    if (who == "you-alert") {
         control = '<li>' +
             '<div class="msj macro">' +
             '<div class="avatar chat-img"><img class="img-circle" src="' + alertIcon + '" /></div>' +
             '<div class="text text-l">' +
             '<p class="name">' +
-            "<strong class='primary-font' style='color:red;'>" + text + "</strong>" +
+            "<strong class='primary-font' style='color:red;'>" + message + "</strong>" +
             '</p>' +
             '<p class="time"><small>' + date + '</small></p>' +
             '</div>' +
             '</div>' +
             '</li>';
-
-        $("#" + id + " ul").append(control).scrollTop($("#" + id + " ul").prop('scrollHeight'));
-        $("#" + id + " .my-text").empty();
     }
+
+    if (who == "you-image") {
+        control = '<li>' +
+            '<div class="msj-rta macro">' +
+            '<div class="text text-r">' +
+            '<p class="name">' +
+            "<strong class='primary-font'>" + userName + "</strong>" +
+            '</p>' +
+            '<p class="message">' +
+                "<img src='" + message + "'>" +
+            '</p>' +
+            '<p class="time"><small>' + date + '</small></p>' +
+            '</div>' +
+            '<div class="avatar chat-img" style="padding:0px 0px 0px 10px !important"><img class="img-circle" src="' + contactIcon + '" /></div>' +
+            '</li>';
+    }
+
+    $("#" + id + " ul").append(control).scrollTop($("#" + id + " ul").prop('scrollHeight'));
+    $("#" + id + " .mytext").val("");
 }
 
 function resetChat(id) {
@@ -80,10 +94,7 @@ function initChatWindow(id, callback) {
             if (e.which == 13) {
                 var text = $(this).val();
                 if (text !== "") {
-                    var userName = $("#userName").val();
-                    insertChat(id, "me", text, { id: 0, name: userName }, false);
                     callback(text);
-                    $(this).val('');
                 }
             }
         });
@@ -97,7 +108,7 @@ function initChatWindow(id, callback) {
 // Inserta un nuevo contacto en la lista de contactos
 function insertContact(id, name) {
     var contactClass = id == ChatManager.userId ? "me-contact" : "other-contacts",
-        contactActive = id == currentUserIdTo ? " contact-active" : "";
+        contactActive = id == ChatManager.currentUserIdTo ? " contact-active" : "";
         contact = "<li class='left clearfix" + contactActive + "'>" +
                         "<span class='chat-img pull-left'>" +
                             "<img src='" + contactIcon + "' alt='User Avatar' class='img-circle'>" +
@@ -129,28 +140,22 @@ function printImage(title, imageUri, listElement) {
                     "<img src='" + url + "'>"
                 "</li>";
 
-    $("#messagesList").html(image);
+    $("#messagesList").append(image);
 }
 
-function uploadFiles(inputId) {
-    var input = document.getElementById(inputId);
-    var files = input.files;
-    var formData = new FormData();
-    formData.append("file", files[0]);
+var sendPublicImage = () => {
+    var input = $("#publicImage")[0],
+        image = input.files[0];
 
-    $.ajax(
-        {
-            url: window.location.protocol + '//' + window.location.host + "/api/upload/image",
-            data: formData,
-            processData: false,
-            contentType: false,
-            type: "POST",
-            success: function (data) {
-                connection.invoke("SendPublicImage", userId, files[0].name);
-            }
-        }
-    );
+    ChatManager.sendPublicImage(image);
 }
+
+var sendPrivateImage = () => {
+    var input = $("#privateImage")[0],
+        image = input.files[0];
+        
+    ChatManager.sendPrivateImage(image);
+};
 
 var printIn = (encodedMsg, listElement) => {
     var li = $("<li></li>").text(encodedMsg);
@@ -202,16 +207,18 @@ $(document).ready(function () {
 
     $(document).on("receivePrivateMessage", (event, message, id, user) => {
         var inputWithId = $(".member_list ul").find("input[name='userId'][value=" + id + "]")[0],
-            contactCard = $(inputWithId).parent();
+            contactCard = $(inputWithId).parent(),
+            from = "me";
 
         if (id != ChatManager.userId) {
             contactCard.addClass("contact-active");
             contactCard.siblings().each((index, sibling) => $(sibling).removeClass("contact-active"));
-            currentUserIdTo = id;
+            from = "you";
         }
 
+        insertChat("private-chat", from, message, user);
+
         $("#private-chat").show();
-        insertChat("private-chat", "you", message, { id: id, name: user }, false);
     });
 
     $(document).on("cleanPrivateWindows", (event, message, id, user) => {
@@ -219,16 +226,18 @@ $(document).ready(function () {
     });
 
     $(document).on("receivePublicMessage", (event, message, id, userName, userId) => {
-        if (id == userId) {
-            insertChat("public-chat", "me", message, { id: userId, name: userName }, false);
-        } else {
-            insertChat("public-chat", "you", message, { id: userId, name: userName }, false);
-        }
+        var from = id == userId ? "me" : "you";
+
+        insertChat("public-chat", from, message, userName);
     });
 
     $(document).on("receivePublicImage", (event, user, fileUri) => {
         const encodedMsg = user + " sends: ";
         printImage(encodedMsg, fileUri, "messagesList");
+    });
+
+    $(document).on("receivePrivateImage", (event, roomId, userId, userName, fileUri) => {
+        insertChat("private-chat", "you-image", fileUri, userName);
     });
 
     $(document).on("loadUser", (event, id, name, age, city) => {
@@ -254,14 +263,14 @@ $(document).ready(function () {
     $(document).on("refreshContactList", (event, id, name) => {
         clearContactList();
         users = [];
+        $("#userList").empty();
     });
 
     $(".chat_container .member_list ul").on("click", "li", function (event) {
         var userIdTo = $(this).find("input[name='userId']")[0].value;
         activateContact($(this));
 
-        if (currentUserIdTo != userIdTo && ChatManager.userId != userIdTo) {
-            currentUserIdTo = userIdTo;
+        if (ChatManager.currentUserIdTo != userIdTo && ChatManager.userId != userIdTo) {
             $("#private-chat").show();
             ChatManager.createPrivateChat(userIdTo).then(
                 () => {
@@ -333,7 +342,7 @@ initChatWindow("private-chat", (text) => {
         () => { },
         (error) => {
             $("#private-chat").show();
-            insertChat("private-chat", "you", error.text, { id: 0, name: "" }, true);
+            insertChat("private-chat", "you-alert", error.text, "");
         }
     );
 });

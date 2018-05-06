@@ -45,7 +45,7 @@
                 </h3>
             </div>
             <div class="panel-body">
-                <div class="col-sm-3 chat_sidebar">
+                <div class="col-sm-12 chat_sidebar">
                     <div class="row">
                         <ul id="userList"></ul>
                     </div>
@@ -83,16 +83,18 @@
                                         <span id="sendMessageButton" class="send-button glyphicon glyphicon-share-alt"></span>
                                     </div>
                                     <div class="upload-button">
-                                        <label class="btn btn-primary">Upload files&hellip; 
-                                            <input id="file" name="file" type="file" size="1" onchange="uploadFiles('file')" style="display: none;">
+                                        <label class="btn btn-primary">
+                                            Upload files&hellip;
+                                            <input id="publicImage" name="file" type="file" size="1" onchange="sendPublicImage()" style="display: none;">
                                         </label>
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
         </div>
     </div>
 </div>
@@ -133,6 +135,12 @@
                                     </div>
                                     <div style="padding:10px;" class="send">
                                         <span id="sendPrivateButton" class="send-button glyphicon glyphicon-share-alt"></span>
+                                    </div>
+                                    <div class="upload-button">
+                                        <label class="btn btn-primary">
+                                            Upload files&hellip;
+                                            <input id="privateImage" name="file" type="file" size="1" onchange="sendPrivateImage()" style="display: none;">
+                                        </label>
                                     </div>
                                 </div>
                             </div>

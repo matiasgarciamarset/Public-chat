@@ -156,3 +156,14 @@
 .chat-window .upload-button {
     padding: 12px;
 }
+
+.chat-window .message img {
+    width: 100%;
+}
+
+.chat-window .avatar img {
+    position: absolute;
+    margin: auto;
+    top: 35px;
+    bottom: 0;
+}

@@ -88,6 +88,21 @@ namespace ChatWeb.Hubs
             }
         }
 
+        public async Task<bool> SendPrivateImage(int roomId, int userId, string fileName)
+        {
+            User currentUser = _userService.FindUserWithId(userId);
+            IRoom room = _chatService.FindRoom(roomId);
+
+            if (currentUser != null && room != null && room.IsMember(currentUser))
+            {
+                var roomName = room.Name;
+                await Clients.Group(roomName).SendAsync("ReceivePrivateImage", room.Id, currentUser.Id, currentUser.Name, "\\uploads\\" + fileName);
+                return true;
+            }
+
+            return false;
+        }
+
         public async Task<bool> SendMessage(int roomId, int userId, string message)
         {
             User currentUser = _userService.FindUserWithId(userId);

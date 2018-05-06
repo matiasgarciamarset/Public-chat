@@ -28,10 +28,18 @@ connection.on("ReceivePublicImage", (user, fileUri) => {
     $(document).trigger("receivePublicImage", [user, fileUri]);
 });
 
+connection.on("ReceivePrivateImage", (roomId, userId, userName, fileUri) => {
+    ChatManager.currentUserIdTo = userId;
+    $(document).trigger("receivePrivateImage", [roomId, userId, userName, fileUri]);
+});
+
 connection.on("ReceiveMessage", (room, userId, userName, message) => {
     if (ChatManager.privateRoomId !== room) {
         ChatManager.privateRoomId = room;
     }
+
+    ChatManager.currentUserIdTo = userId;
+
     $(document).trigger("receivePrivateMessage", [message, userId, userName]);
 });
 
@@ -46,6 +54,7 @@ connectionUser.on("RefreshUsers", () => {
 var ChatManager = {
     userId: -1,
     privateRoomId: -1,
+    currentUserIdTo: -1,
     startConnection: () => {
         var def = $.Deferred();
 
@@ -68,8 +77,8 @@ var ChatManager = {
     sendPublicMessage: (message) => connection.invoke("SendPublicMessage", ChatManager.userId, message),
     createPrivateChat: (userIdTo) => {
         var def = $.Deferred();
-
         if (userIdTo != ChatManager.userId) {
+            ChatManager.currentUserIdTo = userIdTo;
             // Close current chat an open a new one
             connection.invoke("CreatePrivateChat", ChatManager.userId, userIdTo).then(result => {
                     if (result === Number(-1)) {
@@ -111,4 +120,38 @@ var ChatManager = {
     closePrivateChat: () => {
         return connection.invoke("ExitFromChat", ChatManager.privateRoomId, ChatManager.userId);
     },
+    sendPublicImage: (image) => {
+        var formData = new FormData();
+        formData.append("file", image);
+
+        $.ajax(
+            {
+                url: window.location.protocol + '//' + window.location.host + "/api/upload/image",
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    connection.invoke("SendPublicImage", ChatManager.userId, image.name);
+                }
+            }
+        );
+    },
+    sendPrivateImage: (image) => {
+        var formData = new FormData();
+        formData.append("file", image);
+
+        $.ajax(
+            {
+                url: window.location.protocol + '//' + window.location.host + "/api/upload/image",
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    connection.invoke("SendPrivateImage", ChatManager.privateRoomId, ChatManager.userId, image.name);
+                }
+            }
+        );
+    }
 }
