@@ -239,3 +239,21 @@
     color: #fff;
     cursor: pointer;
 }
+
+.user {
+    margin-bottom: 5px;
+}
+
+.user img {
+    height: 34px;
+    width: 34px;
+}
+
+.user p {  
+    margin-left: 20px;
+    display: inline;
+}
+
+.member_list ul li.contact-active {
+    background-color: lightgray
+}

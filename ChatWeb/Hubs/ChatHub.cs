@@ -55,7 +55,6 @@ namespace ChatWeb.Hubs
 
             if (currentUser != null && room != null)
             {
-                await SendMessage(room.Id, userId, "< Left Chat >");
                 room.RemoveUser(currentUser);
 
                 if (room.UserCount <= 1)
@@ -74,7 +73,7 @@ namespace ChatWeb.Hubs
             if (currentUser != null)
             {
                 var universalRoomName = _chatService.UniversalRoom.Name;
-                await Clients.Group(universalRoomName).SendAsync("ReceivePublicMessage", currentUser.Name, message);
+                await Clients.Group(universalRoomName).SendAsync("ReceivePublicMessage", currentUser.Name, currentUser.Id, message);
             }
         }
 
@@ -89,7 +88,22 @@ namespace ChatWeb.Hubs
             }
         }
 
-        public async Task SendMessage(int roomId, int userId, string message)
+        public async Task<bool> SendPrivateImage(int roomId, int userId, string fileName)
+        {
+            User currentUser = _userService.FindUserWithId(userId);
+            IRoom room = _chatService.FindRoom(roomId);
+
+            if (currentUser != null && room != null && room.IsMember(currentUser))
+            {
+                var roomName = room.Name;
+                await Clients.Group(roomName).SendAsync("ReceivePrivateImage", room.Id, currentUser.Id, currentUser.Name, "\\uploads\\" + fileName);
+                return true;
+            }
+
+            return false;
+        }
+
+        public async Task<bool> SendMessage(int roomId, int userId, string message)
         {
             User currentUser = _userService.FindUserWithId(userId);
             IRoom room = _chatService.FindRoom(roomId);
@@ -98,7 +112,9 @@ namespace ChatWeb.Hubs
             {
                 var roomName = room.Name;
                 await Clients.Group(roomName).SendAsync("ReceiveMessage", room.Id, currentUser.Id, currentUser.Name, message);
+                return true;
             }
+            return false;
         }
 
     }

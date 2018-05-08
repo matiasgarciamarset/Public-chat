@@ -55,7 +55,7 @@
 
 .chat-window .macro {
     margin-top: 5px;
-    width: 85%;
+    width: 80%;
     border-radius: 5px;
     padding: 5px;
     display: flex;
@@ -151,4 +151,19 @@
 
 .chat-window:-moz-placeholder { /* Firefox 18- */
     color: #d4d4d4;
+}
+
+.chat-window .upload-button {
+    padding: 12px;
+}
+
+.chat-window .message img {
+    width: 100%;
+}
+
+#private-chat .chat-window .avatar img {
+    position: absolute;
+    margin: auto;
+    top: 35px;
+    bottom: 0;
 }

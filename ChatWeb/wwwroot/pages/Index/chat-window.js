@@ -3,6 +3,11 @@ var contactIcon = "images/contact.jpg",
     currentUserIdTo = -1,
     users = [];
 
+var alertIcon = "images/alertIcon.png",
+    currentUserId = -1,
+    currentUserIdTo = -1,
+    users = [];
+
 function formatAMPM(date) {
     var hours = date.getHours();
     var minutes = date.getMinutes();
@@ -15,41 +20,56 @@ function formatAMPM(date) {
 }            
 
 //-- No use time. It is a javaScript effect.
-function insertChat(id, who, text, user){
+function insertChat(id, who, text, user, isAlert){
     var control = "";
     var date = formatAMPM(new Date());
-
-    if (who == "me"){
-        control = '<li>' +
-                        '<div class="msj macro">' +
-                            '<div class="avatar chat-img"><img class="img-circle" src="' + contactIcon +'" /></div>' +
-                            '<div class="text text-l">' +
-                                '<p class="name">' +
-                                    "<strong class='primary-font'>" + user.name + "</strong>" +
-                                '</p>' +
-                                '<p class="message">'+ text +'</p>' +
-                                '<p class="time"><small>'+date+'</small></p>' +
+    debugger;
+    if (!isAlert) {
+        if (who == "me"){
+            control = '<li>' +
+                            '<div class="msj macro">' +
+                                '<div class="avatar chat-img"><img class="img-circle" src="' + contactIcon +'" /></div>' +
+                                '<div class="text text-l">' +
+                                    '<p class="name">' +
+                                        "<strong class='primary-font'>" + user.name + "</strong>" +
+                                    '</p>' +
+                                    '<p class="message">'+ text +'</p>' +
+                                    '<p class="time"><small>'+date+'</small></p>' +
+                                '</div>' +
                             '</div>' +
-                        '</div>' +
-                    '</li>';                    
-    }else{
-        control = '<li>' +
-                        '<div class="msj-rta macro">' +
-                            '<div class="text text-r">' +
-                                '<p class="name">' +
-                                    "<strong class='primary-font'>" + user.name + "</strong>" +
-                                '</p>' +
-                                '<p class="message">'+ text +'</p>' +
-                                '<p class="time"><small>'+date+'</small></p>' +
-                            '</div>' +
-                        '<div class="avatar chat-img" style="padding:0px 0px 0px 10px !important"><img class="img-circle" src="'+ contactIcon +'" /></div>' +                                
-                  '</li>';
-    }
+                        '</li>';                    
+        }else{
+            control = '<li>' +
+                            '<div class="msj-rta macro">' +
+                                '<div class="text text-r">' +
+                                    '<p class="name">' +
+                                        "<strong class='primary-font'>" + user.name + "</strong>" +
+                                    '</p>' +
+                                    '<p class="message">'+ text +'</p>' +
+                                    '<p class="time"><small>'+date+'</small></p>' +
+                                '</div>' +
+                            '<div class="avatar chat-img" style="padding:0px 0px 0px 10px !important"><img class="img-circle" src="'+ contactIcon +'" /></div>' +                                
+                    '</li>';
+        }
 
-    if (!(who == "you" && user.id == currentUserId)) {
+        if (!(who == "you" && user.id == currentUserId)) {
+            $("#" + id + " ul").append(control).scrollTop($("#" + id + " ul").prop('scrollHeight'));    
+        }
+    } else {
+        control = '<li>' +
+                            '<div class="msj macro">' +
+                                '<div class="avatar chat-img"><img class="img-circle" src="' + alertIcon +'" /></div>' +
+                                '<div class="text text-l">' +
+                                    '<p class="name">' +
+                                        "<strong class='primary-font' style='color:red;'>" + text + "</strong>" +
+                                    '</p>' +
+                                    '<p class="time"><small>'+date+'</small></p>' +
+                                '</div>' +
+                            '</div>' +
+                        '</li>'; 
+        
         $("#" + id + " ul").append(control).scrollTop($("#" + id + " ul").prop('scrollHeight'));    
     }
-    
 }
 
 function resetChat(id){
@@ -63,7 +83,7 @@ function initChatWindow(id, callback) {
                 var text = $(this).val();
                 if (text !== "") {
                     var userName = $("#userName").val();
-                    insertChat(id, "me", text, { id: 0, name: userName });
+                    insertChat(id, "me", text, { id: 0, name: userName }, false);
                     callback(text);
                     $(this).val('');
                 }
@@ -103,7 +123,24 @@ $(document).ready(function () {
 
     $(document).on("receivePrivateMessage", (event, message, id, user) => {
         $("#private-chat").show();
-        insertChat("private-chat", "you", message, { id: id, name: user});
+        insertChat("private-chat", "you", message, { id: id, name: user}, false);
+    });
+
+    $(document).on("receivePublicMessage", (event, message, id, userName, userId) => {
+        if (id == userId) {
+            insertChat("public-chat", "me", message, { id: userId, name: userName}, false);    
+        } else {
+            insertChat("public-chat", "you", message, { id: userId, name: userName}, false);        
+        }
+    });
+
+    $(document).on("cleanPrivateWindows", (event, message, id, user) => {
+        resetChat("private-chat");
+    });
+
+    $(document).on("receivePrivateAlertMessage", (event, message, id, user) => {
+        $("#private-chat").show();
+        insertChat("private-chat", "you", message, { id: id, name: user}, true);
     });
 
     $(document).on("loadUser", (event, id, name) => {
